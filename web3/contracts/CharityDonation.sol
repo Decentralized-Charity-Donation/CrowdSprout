@@ -25,6 +25,7 @@ contract CharityDonation {
         string reqMsg;
         bool requested;
     }
+
        struct Owner {
         address owner;
         string ownerName;
@@ -32,13 +33,64 @@ contract CharityDonation {
         }
 
     mapping(address => Owner) public owners;
-    
-      function addOwner(string memory _ownerName) public {
-        Owner storage ownerDetails = owners[msg.sender];
-        ownerDetails.owner = msg.sender;
-        ownerDetails.ownerName = _ownerName;
 
-    }
+function addOwner(string memory _ownerName) public {
+    require(owners[msg.sender].owner == address(0), "Owner already exists");
+    owners[msg.sender].owner = msg.sender;
+    owners[msg.sender].ownerName = _ownerName;
+    owners[msg.sender].verified = true;
+    emit OwnerAdded(owners[msg.sender].owner, owners[msg.sender].ownerName);
+}
+
+function getOwner(address ownerAddress) public view returns (address, string memory, bool) {
+    Owner memory owner = owners[ownerAddress];
+    return (owner.owner, owner.ownerName, owner.verified);
+}
+
+function getCampaignBasicDetails(uint _id) public view returns (
+    address owner,
+    uint id,
+    string memory title,
+    string memory description
+) {
+    require(campaigns[_id].exists, "Campaign does not exist");
+
+    return (
+        campaigns[_id].owner,
+        campaigns[_id].id,
+        campaigns[_id].title,
+        campaigns[_id].description
+    );
+}
+
+
+function getCampaignFinancialDetails(uint _id) public view returns (
+    uint goal,
+    uint balance,
+    uint noOfContributors
+) {
+    require(campaigns[_id].exists, "Campaign does not exist");
+
+    return (
+        campaigns[_id].goal,
+        campaigns[_id].balance,
+        campaigns[_id].noOfContributors
+    );
+}
+
+function getCampaignVoteRequestDetails(uint _id) public view returns (
+    bool requestStatus,
+    uint votesInFavor
+) {
+    require(campaigns[_id].exists, "Campaign does not exist");
+
+    return (
+        campaigns[_id].request.requested,
+        campaigns[_id].votesInFavor
+    );
+}
+
+
 
     mapping(uint => Campaign) public campaigns;
     uint public campaignCount = 0;
@@ -49,6 +101,8 @@ contract CharityDonation {
     event VoteCasted(uint campaignId, address voter);
     event FundsTransferred(uint campaignId, address owner, uint amount);
     event RefundIssued(uint campaignId, address contributor, uint amount);
+    event OwnerAdded(address indexed ownerAddress, string ownerName);
+
 
     modifier onlyOwner(uint campaignId) {
         require(msg.sender == campaigns[campaignId].owner, "Only owner can call this function");
@@ -80,6 +134,9 @@ contract CharityDonation {
         emit CampaignAdded(campaignCount, _title, _goal, newCampaign.deadline);
         campaignCount++;
     }
+
+
+
 
     function fund(uint256 campaignId) public payable {
         require(msg.value >= campaigns[campaignId].minContribution, "Must fund amount greater than min contribution");
@@ -174,4 +231,8 @@ contract CharityDonation {
     function getVotesInFavor(uint campaignId) public view returns (uint) {
         return campaigns[campaignId].votesInFavor;
     }
+    function getCampaignCount() public view returns (uint) {
+    return campaignCount;
 }
+
+}   

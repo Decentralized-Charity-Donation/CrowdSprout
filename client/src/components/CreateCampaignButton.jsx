@@ -1,37 +1,105 @@
-import React, { useState } from 'react'
-import OwnerInfo from './OwnerInfo' // Ensure OwnerInfo is in the same folder or adjust the path
+import React, { useState } from 'react';
+import Modal from 'react-modal';
+import OwnerInfo from './OwnerInfo';
+import CreateCampaign from './CreateCampaign';
+import { useContract } from '@/ContractContext/ContractContext';
+import handleLogOut from './handleLogOut'; // Import the handleLogOut function
 
-const CreateCampaignButton = ({ isOwner }) => {
-  const [showModal, setShowModal] = useState(false)
+Modal.setAppElement('#root');
+
+const CreateCampaignButton = ({ addNewCampaign, fetchCampaigns }) => {
+  const { contract, signer } = useContract();
+  const [showOwnerModal, setShowOwnerModal] = useState(false);
+  const [showCreateCampaignModal, setShowCreateCampaignModal] = useState(false);
+
+  const handleOwnerSubmit = async () => {
+    try {
+      const check = await contract.getOwner(signer.getAddress());
+      if (check[0] === "0x0000000000000000000000000000000000000000") {
+        setShowOwnerModal(true);
+      } else {
+        setShowCreateCampaignModal(true);
+      }
+    } catch (error) {
+      console.error('Error verifying owner:', error);
+    }
+  };
+
+  const handleCampaignCreation = async (newCampaign) => {
+    try {
+      addNewCampaign(newCampaign);
+      setShowCreateCampaignModal(false);
+      await fetchCampaigns();
+    } catch (error) {
+      console.error('Error creating campaign:', error);
+    }
+  };
 
   return (
     <div>
-      {isOwner && (
-        <div className="flex justify-end mt-4 mb-4">
+      <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-md flex items-center justify-between px-6 py-2" style={{ height: '50px' }}>
+        <div className="text-xl font-bold flex-shrink-0">
+          {/* Navbar Content */}
+        </div>
+        <div className="flex space-x-4 ml-auto">
           <button
-            onClick={() => setShowModal(true)}
+            onClick={handleOwnerSubmit}
             className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-full transition duration-300"
           >
             Create Campaign
           </button>
+          <button
+            onClick={handleLogOut} // Use the handleLogOut function here
+            className="text-sm text-purple-600 font-semibold py-2 px-4 rounded-md hover:bg-purple-200"
+          >
+            Logout
+          </button>
         </div>
-      )}
+      </div>
 
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <OwnerInfo />
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Owner Info Modal */}
+      <Modal
+        isOpen={showOwnerModal}
+        onRequestClose={() => setShowOwnerModal(false)}
+        contentLabel="Owner Info Modal"
+        style={{
+          overlay: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+          content: {
+            width: '400px',
+            height: '300px',
+            margin: 'auto',
+            borderRadius: '10px',
+            padding: '20px',
+            boxSizing: 'border-box',
+          },
+        }}
+      >
+        <OwnerInfo
+          closeModal={() => setShowOwnerModal(false)}
+          onSubmit={() => {
+            setShowOwnerModal(false);
+            setShowCreateCampaignModal(true);
+          }}
+        />
+      </Modal>
+
+      {/* Create Campaign Modal */}
+      <Modal
+        isOpen={showCreateCampaignModal}
+        onRequestClose={() => setShowCreateCampaignModal(false)}
+        contentLabel="Create Campaign Modal"
+        style={{
+          overlay: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+          content: { maxWidth: '500px', margin: 'auto', borderRadius: '10px' },
+        }}
+      >
+        <CreateCampaign
+          closeModal={() => setShowCreateCampaignModal(false)}
+          onSubmit={handleCampaignCreation}
+        />
+      </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default CreateCampaignButton
+export default CreateCampaignButton;
