@@ -93,7 +93,7 @@ const ViewCampaign = () => {
                     <p className="text-xs text-purple-600">Owner Name {ownerDetails?.name}</p>
                   </div>
                 </div>
-                <div className="mt-6">
+               <div className="mt-6">
   <h2 className="text-lg font-semibold text-purple-600">STORY</h2>
   <p className="mt-2">{basicDetails?.description}</p>
 </div>

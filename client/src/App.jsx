@@ -23,7 +23,7 @@ const routes = (
       <Route path="/allcampaigns" exact element={<AllCampaigns />} />
       <Route path="/ownercampaigns" exact element={<OwnerCampaigns />} />
       <Route path="/viewcampaign/:id" exact element={<ViewCampaign />} />
-      <Route path="/fundcampaign" exact element={<FundCampaign />} />
+      <Route path="/fundcampaign/:id" exact element={<FundCampaign />} />
       
     </Routes>
   </Router>

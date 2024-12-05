@@ -12,7 +12,7 @@ const AllCampaigns = () => {
   const navigate = useNavigate(); 
 
   const handleClick = (campaignId) => {
-    navigate(`/viewcampaign/${campaignId}`); 
+    navigate(`/fundcampaign/${campaignId}`); 
   };
 
   useEffect(() => {

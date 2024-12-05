@@ -7,7 +7,7 @@ import handleLogOut from './handleLogOut'; // Import the handleLogOut function
 
 Modal.setAppElement('#root');
 
-const CreateCampaignButton = ({ addNewCampaign, fetchCampaigns }) => {
+const CreateCampaignButton = ({ addNewCampaign, fetchCampaigns,setclickedSubmit}) => {
   const { contract, signer } = useContract();
   const [showOwnerModal, setShowOwnerModal] = useState(false);
   const [showCreateCampaignModal, setShowCreateCampaignModal] = useState(false);
@@ -96,6 +96,7 @@ const CreateCampaignButton = ({ addNewCampaign, fetchCampaigns }) => {
         <CreateCampaign
           closeModal={() => setShowCreateCampaignModal(false)}
           onSubmit={handleCampaignCreation}
+          setclickedSubmit={setclickedSubmit}
         />
       </Modal>
     </div>
