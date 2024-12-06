@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useContract } from '@/ContractContext/ContractContext';
 import handleLogOut from '@/components/handleLogOut';
 import FundCard from '@/components/FundCard';
-import { ethers } from 'ethers'; // Assuming you use ethers.js for formatting ETH
+import { ethers } from 'ethers'; 
 
 const FundCampaign = () => {
   const { id } = useParams();
@@ -40,6 +40,7 @@ const FundCampaign = () => {
           title: fetchedBasicDetails.title,
           description: fetchedBasicDetails.description,
           creatorAddress: fetchedBasicDetails.owner,
+          minContribution:fetchedBasicDetails.minContribution
         });
 
         setFinancialDetails({
@@ -50,7 +51,9 @@ const FundCampaign = () => {
         });
 
         setContributors(fetchedContributors);
+        
         setOwnerDetails({
+          adress:fetchedOwnerDetails.owner,
           name: fetchedOwnerDetails.ownerName,
           verified: fetchedOwnerDetails.verified,
         });
@@ -118,10 +121,10 @@ const FundCampaign = () => {
                       </thead>
                       <tbody>
                         {contributors.map((contributor, index) => (
-                          <tr key={contributor.address} className="border-b">
+                          <tr key={index+1} className="border-b">
                             <td className="px-4 py-2">{index + 1}</td>
-                            <td className="px-4 py-2">{contributor.address}</td>
-                            <td className="px-4 py-2">{contributor.amount} ETH</td>
+                            <td className="px-4 py-2">{contributor}</td>
+                            <td className="px-4 py-2">100 ETH</td>
                           </tr>
                         ))}
                       </tbody>
@@ -134,7 +137,7 @@ const FundCampaign = () => {
             <div>
               <FundCard
                 campaign={financialDetails}
-                minContribution="0.1" // Example minimum contribution
+                minContribution={basicDetails?.minContribution}// Example minimum contribution
                 campaignId={basicDetails?.id}
                 refreshCampaign={() => {}}
               />

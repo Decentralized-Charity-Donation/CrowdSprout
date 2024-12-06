@@ -51,7 +51,8 @@ function getCampaignBasicDetails(uint _id) public view returns (
     address owner,
     uint id,
     string memory title,
-    string memory description
+    string memory description,
+    uint minContribution
 ) {
     require(campaigns[_id].exists, "Campaign does not exist");
 
@@ -59,7 +60,8 @@ function getCampaignBasicDetails(uint _id) public view returns (
         campaigns[_id].owner,
         campaigns[_id].id,
         campaigns[_id].title,
-        campaigns[_id].description
+        campaigns[_id].description,
+        campaigns[_id].minContribution
     );
 }
 
@@ -90,6 +92,18 @@ function getCampaignVoteRequestDetails(uint _id) public view returns (
     );
 }
 
+function getContributionForAddress(uint256 campaignId, address contributor) 
+    public 
+    view 
+    returns (uint256) 
+{
+    return campaigns[campaignId].contributions[contributor];
+}
+
+
+function getContributorsForCampaign(uint campaignId) public view returns (address[] memory) {
+    return campaigns[campaignId].contributorList;
+}
 
 
     mapping(uint => Campaign) public campaigns;
@@ -148,10 +162,9 @@ function getCampaignVoteRequestDetails(uint _id) public view returns (
             campaign.contributorList.push(msg.sender); // Add to list only if new contributor
             campaign.noOfContributors++;
         }
-
+        
         campaign.contributions[msg.sender] += msg.value;
         campaign.balance += msg.value;
-
         emit Funded(campaignId, msg.sender, msg.value);
     }
 
@@ -216,9 +229,7 @@ function getCampaignVoteRequestDetails(uint _id) public view returns (
         campaign.balance = 0;
     }
 
-    function getContributorsForCampaign(uint campaignId) public view returns (address[] memory) {
-        return campaigns[campaignId].contributorList;
-    }
+ 
 
     function getCampaignBalance(uint campaignId) public view returns (uint) {
         return campaigns[campaignId].balance;
