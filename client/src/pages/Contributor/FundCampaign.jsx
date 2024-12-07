@@ -48,25 +48,27 @@ const FundCampaign = () => {
 
         setBasicDetails({
           id: fetchedBasicDetails.id.toString(),
-          title: fetchedBasicDetails[0],
-          description: fetchedBasicDetails[1],
-          creatorAddress: fetchedBasicDetails[2],
-          minContribution: fetchedBasicDetails[3],
+          title: fetchedBasicDetails[2],
+          description: fetchedBasicDetails[3],
+          creatorAddress: fetchedBasicDetails[0],
+          minContribution: parseFloat(fetchedBasicDetails[4]),
         });
 
         setFinancialDetails({
           goal: parseFloat(fetchedFinancialDetails[0]),
           balance: parseFloat(fetchedFinancialDetails[1]),
-          noOfContributors: fetchedFinancialDetails[2],
+          noOfContributors: parseFloat(fetchedFinancialDetails[2]),
           daysLeft: fetchedFinancialDetails.daysLeft,
         });
 
         setContributors(fetchedContributors);
+
         setOwnerDetails({
-          address: fetchedOwnerDetails.owner,
-          name: fetchedOwnerDetails.ownerName,
-          verified: fetchedOwnerDetails.verified,
+          address: fetchedOwnerDetails[0],
+          name: fetchedOwnerDetails[1],
+          verified: fetchedOwnerDetails[2],
         });
+
       } catch (err) {
         setError('Error fetching campaign details. Please try again later.');
       } finally {
