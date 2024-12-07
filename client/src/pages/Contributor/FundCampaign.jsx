@@ -48,16 +48,16 @@ const FundCampaign = () => {
 
         setBasicDetails({
           id: fetchedBasicDetails.id.toString(),
-          title: fetchedBasicDetails.title,
-          description: fetchedBasicDetails.description,
-          creatorAddress: fetchedBasicDetails.owner,
-          minContribution: fetchedBasicDetails.minContribution,
+          title: fetchedBasicDetails[0],
+          description: fetchedBasicDetails[1],
+          creatorAddress: fetchedBasicDetails[2],
+          minContribution: fetchedBasicDetails[3],
         });
 
         setFinancialDetails({
-          goal: parseFloat(fetchedFinancialDetails.goal),
-          balance: parseFloat(fetchedFinancialDetails.balance),
-          noOfContributors: fetchedFinancialDetails.noOfContributors,
+          goal: parseFloat(fetchedFinancialDetails[0]),
+          balance: parseFloat(fetchedFinancialDetails[1]),
+          noOfContributors: fetchedFinancialDetails[2],
           daysLeft: fetchedFinancialDetails.daysLeft,
         });
 
@@ -99,6 +99,7 @@ const FundCampaign = () => {
                 basicDetails={basicDetails}
                 ownerDetails={ownerDetails}
                 contributors={contributors}
+                id={id}
               />
             </div>
             <div>

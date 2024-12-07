@@ -36,7 +36,9 @@ export const ContractProvider = ({ children }) => {
           setContract(tempContract);
 
           const address = await tempSigner.getAddress();
+          
           setIsOwner(address === "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" || address === "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"); 
+
           setIsAdmin(address === "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc")
 
           toast.success("Wallet connected successfully!");

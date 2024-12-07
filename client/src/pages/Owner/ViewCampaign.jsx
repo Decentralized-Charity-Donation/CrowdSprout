@@ -48,25 +48,27 @@ const ViewCampaign = () => {
 
         setBasicDetails({
           id: fetchedBasicDetails.id.toString(),
-          title: fetchedBasicDetails.title,
-          description: fetchedBasicDetails.description,
-          creatorAddress: fetchedBasicDetails.owner,
-          minContribution: fetchedBasicDetails.minContribution,
+          title: fetchedBasicDetails[2],
+          description: fetchedBasicDetails[3],
+          creatorAddress: fetchedBasicDetails[0],
+          minContribution: parseFloat(fetchedBasicDetails[4]),
         });
 
         setFinancialDetails({
-          goal: parseFloat(fetchedFinancialDetails.goal),
-          balance: parseFloat(fetchedFinancialDetails.balance),
-          noOfContributors: fetchedFinancialDetails.noOfContributors,
+          goal: parseFloat(fetchedFinancialDetails[0]),
+          balance: parseFloat(fetchedFinancialDetails[1]),
+          noOfContributors: parseFloat(fetchedFinancialDetails[2]),
           daysLeft: fetchedFinancialDetails.daysLeft,
         });
 
         setContributors(fetchedContributors);
+
         setOwnerDetails({
-          address: fetchedOwnerDetails.owner,
-          name: fetchedOwnerDetails.ownerName,
-          verified: fetchedOwnerDetails.verified,
+          address: fetchedOwnerDetails[0],
+          name: fetchedOwnerDetails[1],
+          verified: fetchedOwnerDetails[2],
         });
+
       } catch (err) {
         setError('Error fetching campaign details. Please try again later.');
       } finally {
@@ -99,6 +101,7 @@ const ViewCampaign = () => {
                 basicDetails={basicDetails}
                 ownerDetails={ownerDetails}
                 contributors={contributors}
+                id={id}
               />
             </div>
             <div>

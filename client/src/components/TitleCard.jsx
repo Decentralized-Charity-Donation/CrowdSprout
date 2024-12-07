@@ -1,10 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useContract } from '@/ContractContext/ContractContext';
 
-const TitleCard = ({ basicDetails, ownerDetails, contributors }) => {
+const TitleCard = ({ basicDetails, ownerDetails, contributors, id}) => {
+  console.log(ownerDetails)
+  const [contributions, setContributions] = useState([]);
+  const {contract}=useContract()
+  useEffect(() => {
+    
+    const fetchContributions = async () => {
+      const contributionsData = await Promise.all(
+        contributors.map(async (contributor) => {
+          const res = await contract.getContributionForAddress(id, contributor);
+          return { contributor, amount: Number(res) }; // Convert from Wei to ETH
+        })
+      );
+   
+      setContributions(contributionsData);
+     
+    };
+
+    if (contract) {
+    
+      fetchContributions();
+    }
+  }, []);
+
   return (
+   
     <div>
       <img
-        src=""
+        src={basicDetails?.image || "default-image-url"} 
         alt={basicDetails?.title}
         className="w-full h-80 object-cover rounded-lg"
       />
@@ -13,7 +38,7 @@ const TitleCard = ({ basicDetails, ownerDetails, contributors }) => {
         <p className="mt-2 text-sm text-purple-600">CREATOR</p>
         <div className="flex items-center mt-1">
           <div className="w-10 h-10 bg-purple-400 rounded-full flex items-center justify-center text-white font-bold">
-            W
+            {ownerDetails?.name?.charAt(0)} 
           </div>
           <div className="ml-3">
             <p className="text-sm font-medium">{basicDetails?.creatorAddress}</p>
@@ -38,11 +63,11 @@ const TitleCard = ({ basicDetails, ownerDetails, contributors }) => {
                 </tr>
               </thead>
               <tbody>
-                {contributors.map((contributor, index) => (
+                {contributions.map((data, index) => (
                   <tr key={index} className="border-b">
                     <td className="px-4 py-2">{index + 1}</td>
-                    <td className="px-4 py-2">{contributor}</td>
-                    <td className="px-4 py-2">100 ETH</td>
+                    <td className="px-4 py-2">{data.contributor}</td>
+                    <td className="px-4 py-2">{data.amount} ETH</td>
                   </tr>
                 ))}
               </tbody>
