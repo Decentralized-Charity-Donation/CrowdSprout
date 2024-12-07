@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useContract } from '@/ContractContext/ContractContext';
+import { useNavigate } from 'react-router-dom';
 import CreateCampaignButton from '@/components/CreateCampaignButton';
 
 const OwnerCampaigns = () => {
@@ -9,6 +10,10 @@ const OwnerCampaigns = () => {
   const [campaignsList, setCampaignsList] = useState([]);
   const { signer, contract } = useContract();
   const [clickedSubmit, setClickedSubmit] = useState(false);
+  const navigate = useNavigate(); 
+  const handleClick = (campaignId) => {
+    navigate(`/viewcampaign/${campaignId}`); 
+  };
 
   useEffect(() => {
     if (!isToastShown && signer) {
@@ -50,7 +55,7 @@ const OwnerCampaigns = () => {
   useEffect(() => {
     if (clickedSubmit) {
       fetchCampaigns();
-      setClickedSubmit(false); // Reset to prevent continuous updates
+      setClickedSubmit(false); 
     }
   }, [clickedSubmit]);
 
@@ -85,7 +90,8 @@ const OwnerCampaigns = () => {
                 <div className="p-4">
                   <h3 className="text-xl font-semibold text-gray-800">{campaign.title}</h3>
                   <p className="text-gray-600 mt-2 text-sm">{campaign.description}</p>
-                  <button className="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                  <button onClick={() => handleClick(campaign.id)}
+                  className="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
                     View Campaign
                   </button>
                 </div>

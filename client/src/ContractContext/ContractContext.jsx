@@ -10,6 +10,7 @@ export const ContractProvider = ({ children }) => {
   const [signer, setSigner] = useState(null);
   const [contract, setContract] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3'; 
   const contractABI = contractJson.abi;
 
@@ -36,6 +37,7 @@ export const ContractProvider = ({ children }) => {
 
           const address = await tempSigner.getAddress();
           setIsOwner(address === "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" || address === "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"); 
+          setIsAdmin(address === "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc")
 
           toast.success("Wallet connected successfully!");
         } else {
@@ -51,7 +53,7 @@ export const ContractProvider = ({ children }) => {
   };
 
   return (
-    <ContractContext.Provider value={{ wallet, signer, provider, contract, isOwner }}>
+    <ContractContext.Provider value={{ wallet, signer, provider, contract, isOwner,isAdmin }}>
       {children}
     </ContractContext.Provider>
   );

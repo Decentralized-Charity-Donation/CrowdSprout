@@ -4,14 +4,17 @@ import { useContract } from "../ContractContext/ContractContext";
 import { useNavigate } from "react-router-dom";
 
 const ConnectWallet = () => {
-  const { wallet, isOwner, contract } = useContract();
+  const { wallet, isOwner, contract ,isAdmin} = useContract();
   const [connecting, setConnecting] = useState(false); 
   const navigate = useNavigate();
 
 
   useEffect(() => {
     if (connecting && contract) {
-      if (isOwner) {
+      if(isAdmin){
+        navigate("/adminPage");
+      }
+     else if (isOwner) {
         navigate("/ownercampaigns");
       } else {
         navigate("/allcampaigns");
