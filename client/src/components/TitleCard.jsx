@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useContract } from '@/ContractContext/ContractContext';
 
 const TitleCard = ({ basicDetails, ownerDetails, contributors, id}) => {
-  console.log(ownerDetails)
+
   const [contributions, setContributions] = useState([]);
   const {contract}=useContract()
   useEffect(() => {
@@ -28,12 +28,8 @@ const TitleCard = ({ basicDetails, ownerDetails, contributors, id}) => {
   return (
    
     <div>
-      <img
-        src={basicDetails?.image || "default-image-url"} 
-        alt={basicDetails?.title}
-        className="w-full h-80 object-cover rounded-lg"
-      />
-      <div className="bg-purple-100 rounded-lg mt-4 p-4">
+    
+      <div className="bg-purple-100 rounded-lg mt-20 p-4">
         <h1 className="text-2xl text-purple-600 font-semibold">{basicDetails?.title}</h1>
         <p className="mt-2 text-sm text-purple-600">CREATOR</p>
         <div className="flex items-center mt-1">

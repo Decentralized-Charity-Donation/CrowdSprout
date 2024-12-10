@@ -13,7 +13,7 @@ const Navbar = ({ homeRef, aboutUsRef, contactUsRef }) => {
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-md flex items-center justify-between px-6 py-2">
       <div className="text-xl font-bold flex-shrink-0">
-        <Link to="/home">Logo</Link>
+        <Link to="/home">CharityChain</Link>
       </div>
 
       <div className="flex flex-grow justify-center space-x-8">

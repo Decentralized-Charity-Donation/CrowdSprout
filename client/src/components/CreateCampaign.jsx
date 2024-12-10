@@ -10,7 +10,9 @@ const CreateCampaign = ({ closeModal, setclickedSubmit }) => {
     description: "",
     goal: "",
     minContribution: "",
-    deadline: "",
+    days: "",
+    hours: "",
+    minutes: "",
   });
 
   const handleCampaignSubmit = async (e) => {
@@ -20,26 +22,33 @@ const CreateCampaign = ({ closeModal, setclickedSubmit }) => {
     const description = document.getElementById("description").value;
     const goal = document.getElementById("goal").value;
     const minContribution = document.getElementById("minContribution").value;
-    const deadline = document.getElementById("deadline").value;
+    const days = parseInt(document.getElementById("days").value) || 0;
+    const hours = parseInt(document.getElementById("hours").value) || 0;
+    const minutes = parseInt(document.getElementById("minutes").value) || 0;
+
+   
 
     const collectedData = {
       title,
       description,
       goal,
-      minContribution,
-      deadline,
+      days,
+      hours,
+      minutes,
+      minContribution
+     
     };
 
-    // Save the collected data in state for further use
     setFormData(collectedData);
-
 
     try {
       const tx = await contract.addCampaign(
         collectedData.title,
         collectedData.description,
         collectedData.goal,
-        collectedData.deadline,
+        collectedData.days, 
+        collectedData.hours,
+        collectedData.minutes,
         collectedData.minContribution
       );
 
@@ -104,13 +113,36 @@ const CreateCampaign = ({ closeModal, setclickedSubmit }) => {
             </div>
             <div className="mb-5">
               <label className="block text-gray-700 font-medium mb-2">End Date</label>
-              <input
-                id="deadline"
-                type="number"
-                className="border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="Enter deadline in days"
-                required
-              />
+              <div className="flex space-x-4">
+                <input
+                  id="days"
+                  type="number"
+                  className="border border-gray-300 rounded-lg w-1/3 py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Days"
+                  min="0"
+                  required
+                />
+                <input
+                  id="hours"
+                  type="number"
+                  className="border border-gray-300 rounded-lg w-1/3 py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Hours"
+                  min="0"
+                  max="23"
+                  required
+                />
+                <input
+                  id="minutes"
+                  type="number"
+                  className="border border-gray-300 rounded-lg w-1/3 py-3 px-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Minutes"
+                  min="0"
+                  max="59"
+                  required
+                />
+                  
+
+              </div>
             </div>
             <button
               type="submit"

@@ -6,10 +6,10 @@ const AboutUs = () => {
     <div className="max-w-5xl mx-auto text-center">
         <h2 className="text-3xl font-bold text-purple-700 mb-6">About Us</h2>
         <p className="text-lg leading-relaxed mb-3">
-            Welcome to our decentralized crowdfunding platform! Powered by blockchain, we ensure security, transparency, and a global reach, allowing donors and beneficiaries to connect directly and securely.
+            Welcome to our decentralized charity donation platform! Powered by blockchain, we ensure security, transparency, and a global reach, allowing donors and beneficiaries to connect directly and securely.
         </p>
         <p className="text-lg leading-relaxed mb-8">
-            Our mission is to create a community-driven ecosystem that supports impactful initiatives. Through our platform, anyone can launch a campaign and attract support from people worldwide.
+            Our mission is to create a community-driven ecosystem that supports impactful initiatives. Through our platform, owners can launch a campaign and attract support from people worldwide.
         </p>
     </div>
 
