@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useContract } from '@/ContractContext/ContractContext';
-import { useNavigate } from 'react-router-dom';
-import handleLogOut from '@/components/handleLogOut';
+import React, { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useContract } from "@/ContractContext/ContractContext";
+import { useNavigate } from "react-router-dom";
+import handleLogOut from "@/components/handleLogOut";
 
 const AllCampaigns = () => {
   const [isToastShown, setIsToastShown] = useState(false);
-  const [campaignsList, setCampaignsList] = useState([]); 
+  const [campaignsList, setCampaignsList] = useState([]);
   const { signer, contract } = useContract();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleClick = (campaignId) => {
-    navigate(`/fundcampaign/${campaignId}`); 
+    navigate(`/fundcampaign/${campaignId}`);
   };
 
   useEffect(() => {
     if (signer && !isToastShown) {
-      toast.success('Connected to MetaMask successfully!', {
+      toast.success("Connected to MetaMask successfully!", {
         autoClose: 6000,
       });
       setIsToastShown(true);
@@ -31,17 +31,19 @@ const AllCampaigns = () => {
 
       for (let i = 0; i < campaignCount; i++) {
         const campaignDetails = await contract.getCampaignBasicDetails(i);
+        const campaignImageCid = await contract.getCardImage(campaignDetails.id); // Fetch CID for image
         campaigns.push({
           id: campaignDetails.id,
           title: campaignDetails.title,
           description: campaignDetails.description,
+          imageCid: campaignImageCid, // Add image CID to campaign details
         });
       }
 
       setCampaignsList(campaigns);
     } catch (error) {
-      console.error('Error fetching campaigns:', error);
-      toast.error('Failed to fetch campaigns. Please try again.');
+      console.error("Error fetching campaigns:", error);
+      toast.error("Failed to fetch campaigns. Please try again.");
     }
   };
 
@@ -53,20 +55,19 @@ const AllCampaigns = () => {
 
   return (
     <>
-      {/* Navbar with logout button */}
-      <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-md flex items-center justify-between px-6 py-2" style={{ height: '50px' }}>
-        <div className="text-xl font-bold flex-shrink-0">
-          {/* Navbar Content */}
-        </div>
+      <div
+        className="fixed top-0 left-0 w-full z-50 bg-white shadow-md flex items-center justify-between px-6 py-2"
+        style={{ height: "50px" }}
+      >
+        <div className="text-xl font-bold flex-shrink-0">{/* Navbar Content */}</div>
         <button
-          onClick={handleLogOut}  // Call the handleLogOut function
+          onClick={handleLogOut}
           className="text-sm text-purple-600 font-semibold py-2 px-4 rounded-md hover:bg-purple-200"
         >
           Logout
         </button>
       </div>
 
-      {/* Campaigns List */}
       <div className="bg-gray-100 py-10 mt-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-8 text-center">
@@ -80,21 +81,23 @@ const AllCampaigns = () => {
                 className="bg-white rounded-lg shadow-md overflow-hidden transform transition duration-500 hover:scale-105 p-4"
               >
                 <img
-                  src={`campaign${campaign.id}.jpg`}
-                  alt={`Campaign ${campaign.id}`}
-                  className="w-full h-40 object-cover"
-                  onError={(e) => (e.target.src = 'fallback.jpg')}
+                  src={`https://ipfs.io/ipfs/${campaign.imageCid}`}
+                  alt={campaign.title}
+                  className="mx-auto rounded-lg shadow-lg w-[350px] h-[150px]"
                 />
                 <div className="p-4">
                   <h3 className="text-xl font-semibold text-gray-800">
                     {campaign.title}
                   </h3>
                   <p className="text-gray-600 mt-2 text-sm">
-                    {campaign.description}
+                    {campaign.description.length > 100
+                      ? `${campaign.description.slice(0, 100)}...`
+                      : campaign.description}
                   </p>
                   <button
-                    onClick={() => handleClick(campaign.id)} // Pass campaign.id as argument
-                    className="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                    onClick={() => handleClick(campaign.id)}
+                    className="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded transition duration-300"
+                  >
                     Raise Fund
                   </button>
                 </div>

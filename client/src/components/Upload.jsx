@@ -15,11 +15,6 @@ const Upload = ({ campaignId }) => {
     pinataGateway: "fuchsia-late-magpie-847.mypinata.cloud",
   });
 
-  const pinata1 = new PinataSDK({
-    pinataJwt:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI0MWYxMDA4ZC0zZmYwLTRjYzQtODI1MC0xN2JkNGU4MGJhZTgiLCJlbWFpbCI6InZpbmF5YWdhbmdhZGhhcjIwMDRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjRmNDc0ZTYxNzBmMGJhNGZlNTllIiwic2NvcGVkS2V5U2VjcmV0IjoiMWMzOTIyOGJjMGM5YzNlYWY2ODM1MDcxZDc3ZGRlNTU0OTZkYzI3OWQ0NWJkODZkNzk3ODg1Y2NlZGE4MWViNiIsImV4cCI6MTc2NTE4NzIwMH0.t52SfjIcD9n-Qs0exomJhEfuTP2mojXUNV8D2vuoTO8",
-    pinataGateway: "example-gateway.mypinata.cloud",
-  });
-
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -120,8 +115,10 @@ async function main() {
 
 
   return (
-    <div className="max-w-md mx-auto bg-white border-2 border-purple-400 rounded-lg shadow-lg p-6">
+    <div>
+    
       {!cid ? (
+        <div className="max-w-md mx-auto bg-white border-2 border-purple-400 rounded-lg shadow-lg p-6">
         <div
           className="flex flex-col items-center justify-center border-2 border-dashed border-purple-400 rounded-lg bg-gray-50 p-10"
           onDrop={handleDrop}
@@ -149,6 +146,7 @@ async function main() {
   </div>
   <p className="text-gray-500">Drag and Drop File</p>
   <p className="text-xs text-gray-400">JPG, PNG, up to 5MB</p>
+  <p className="text-xs text-gray-400">Dimensions : 600 x 300</p>
 </div>
 
           </div>
@@ -178,29 +176,24 @@ async function main() {
             {isUploading ? 'Uploading...' : 'Submit'}
           </button>
         </div>
+        </div>
       ) : (
         <div className="text-center">
-          <p className="text-purple-600 font-semibold mb-4">Image uploaded successfully!</p>
           <img
             src={`https://ipfs.io/ipfs/${cid}`}
 
             alt="Uploaded"
-            className="mx-auto rounded-lg shadow-lg"
+            className="mx-auto rounded-lg shadow-lg r w-[600px] h-[300px]"
           />
           
           <div className="mt-4 text-purple-600">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6 mx-auto"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-            <p>Like</p>
+            
+             
+            
           </div>
         </div>
       )}
+    
     </div>
   );
 };

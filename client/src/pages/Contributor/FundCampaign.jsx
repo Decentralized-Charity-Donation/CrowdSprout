@@ -5,6 +5,7 @@ import handleLogOut from '@/components/handleLogOut';
 import FundCard from '@/components/FundCard';
 import VoteCard from '@/components/VoteCard';
 import TitleCard from '@/components/TitleCard'; 
+import DisplayImage from '@/components/DisplayImage';
 import { ethers } from 'ethers';
 
 const FundCampaign = () => {
@@ -97,6 +98,7 @@ const FundCampaign = () => {
         <div className="my-10 max-w-5xl mx-auto py-10 px-6">
           <div className="grid md:grid-cols-3 gap-8">
             <div className="md:col-span-2">
+              <DisplayImage campaignId={id}/>
               <TitleCard
                 basicDetails={basicDetails}
                 ownerDetails={ownerDetails}

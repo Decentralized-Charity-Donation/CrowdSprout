@@ -112,7 +112,7 @@ const CreateCampaign = ({ closeModal, setclickedSubmit }) => {
               />
             </div>
             <div className="mb-5">
-              <label className="block text-gray-700 font-medium mb-2">End Date</label>
+              <label className="block text-gray-700 font-medium mb-2">Campaign must End in</label>
               <div className="flex space-x-4">
                 <input
                   id="days"

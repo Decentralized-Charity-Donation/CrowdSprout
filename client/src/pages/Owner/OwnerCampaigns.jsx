@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useContract } from '@/ContractContext/ContractContext';
-import { useNavigate } from 'react-router-dom';
-import CreateCampaignButton from '@/components/CreateCampaignButton';
+import React, { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useContract } from "@/ContractContext/ContractContext";
+import { useNavigate } from "react-router-dom";
+import CreateCampaignButton from "@/components/CreateCampaignButton";
 
 const OwnerCampaigns = () => {
   const [isToastShown, setIsToastShown] = useState(false);
   const [campaignsList, setCampaignsList] = useState([]);
   const { signer, contract } = useContract();
   const [clickedSubmit, setClickedSubmit] = useState(false);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const handleClick = (campaignId) => {
-    navigate(`/viewcampaign/${campaignId}`); 
+    navigate(`/viewcampaign/${campaignId}`);
   };
 
   useEffect(() => {
     if (!isToastShown && signer) {
-      toast.success('Connected to MetaMask successfully!', {
+      toast.success("Connected to MetaMask successfully!", {
         autoClose: 6000,
       });
       setIsToastShown(true);
@@ -30,6 +30,9 @@ const OwnerCampaigns = () => {
       const campaignCount = await contract.getCampaignCount();
       for (let i = 0; i < campaignCount; i++) {
         const campaignDetails = await contract.getCampaignBasicDetails(i);
+        const campaignImageCid = await contract.getCardImage(
+          campaignDetails.id
+        );
         const owner_address = campaignDetails.owner;
         const address = await signer.getAddress();
         if (owner_address === address) {
@@ -37,12 +40,13 @@ const OwnerCampaigns = () => {
             id: campaignDetails.id,
             title: campaignDetails.title,
             description: campaignDetails.description,
+            imageCid: campaignImageCid,
           });
         }
       }
       setCampaignsList(campaigns);
     } catch (error) {
-      console.error('Error fetching campaigns:', error);
+      console.error("Error fetching campaigns:", error);
     }
   };
 
@@ -55,7 +59,7 @@ const OwnerCampaigns = () => {
   useEffect(() => {
     if (clickedSubmit) {
       fetchCampaigns();
-      setClickedSubmit(false); 
+      setClickedSubmit(false);
     }
   }, [clickedSubmit]);
 
@@ -82,16 +86,24 @@ const OwnerCampaigns = () => {
                 className="bg-white rounded-lg shadow-md overflow-hidden transform transition duration-500 hover:scale-105 p-4"
               >
                 <img
-                  src={`campaign${campaign.id}.jpg`}
-                  alt={`Campaign ${campaign.id}`}
-                  className="w-full h-40 object-cover"
-                  onError={(e) => (e.target.src = 'fallback.jpg')}
+                  src={`https://ipfs.io/ipfs/${campaign.imageCid}`}
+                  alt={campaign.title}
+                  className="mx-auto rounded-lg shadow-lg w-[350px] h-[150px]"
                 />
                 <div className="p-4">
-                  <h3 className="text-xl font-semibold text-gray-800">{campaign.title}</h3>
-                  <p className="text-gray-600 mt-2 text-sm">{campaign.description}</p>
-                  <button onClick={() => handleClick(campaign.id)}
-                  className="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {campaign.title}
+                  </h3>
+                  <p className="text-gray-600 mt-2 text-sm">
+                    {campaign.description.length > 100
+                      ? `${campaign.description.slice(0, 100)}...`
+                      : campaign.description}
+                  </p>
+
+                  <button
+                    onClick={() => handleClick(campaign.id)}
+                    className="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded transition duration-300"
+                  >
                     View Campaign
                   </button>
                 </div>
