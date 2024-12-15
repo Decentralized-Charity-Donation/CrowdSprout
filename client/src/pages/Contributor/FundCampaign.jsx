@@ -53,13 +53,14 @@ const FundCampaign = () => {
           description: fetchedBasicDetails[3],
           creatorAddress: fetchedBasicDetails[0],
           minContribution: parseFloat(fetchedBasicDetails[4]),
+          daysLeft: parseFloat(fetchedBasicDetails[5]),
         });
 
         setFinancialDetails({
           goal: parseFloat(fetchedFinancialDetails[0]),
           balance: parseFloat(fetchedFinancialDetails[1]),
           noOfContributors: parseFloat(fetchedFinancialDetails[2]),
-          daysLeft: fetchedFinancialDetails.daysLeft,
+         
         });
 
         setContributors(fetchedContributors);
@@ -113,6 +114,7 @@ const FundCampaign = () => {
                 campaignId={basicDetails?.id}
                 refreshCampaign={() => {}}
                 setOnFund={setOnFund}
+                deadline={basicDetails.daysLeft}
               />
               <VoteCard campaignId={basicDetails?.id} onVote={handleVote} />
             </div>

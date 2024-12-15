@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useContract } from '@/ContractContext/ContractContext';
 import { ethers } from 'ethers';
+import CountdownTimer from '@/components/CountdownTimer';
 
-const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setOnFund }) => {
+const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setOnFund ,deadline}) => {
   const [donationAmount, setDonationAmount] = useState('');
   const { contract, signer, isOwner } = useContract();
 
@@ -44,11 +45,13 @@ const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setO
 
   return (
     <div className="bg-purple-100 rounded-lg p-6 mb-6">
-      <h2 className="text-lg font-semibold mb-4 text-purple-600">FUND</h2>
+      {!isOwner && <h2 className="text-lg font-semibold mb-4 text-purple-600">FUND</h2>}
+      {isOwner && <h2 className="text-lg font-semibold mb-4 text-purple-600">INFO</h2>}
+      
       <div className="space-y-4">
         <div className="flex justify-between">
-          <p className="text-sm">Days Left</p>
-          <p className="text-purple-600">{campaign.daysLeft}</p>
+        
+          <CountdownTimer deadlineTimestamp={deadline} />
         </div>
         <div className="flex justify-between">
           <p className="text-sm">Raised</p>

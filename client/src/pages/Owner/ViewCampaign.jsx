@@ -8,6 +8,7 @@ import Updates from '@/components/Updates';
 import Upload from '@/components/Upload';
 import RequestWithdrawalCard from '@/components/RequestWithdrawalCard';
 
+
 const ViewCampaign = () => {
   const { id } = useParams();
   const [basicDetails, setBasicDetails] = useState(null);
@@ -54,13 +55,14 @@ const ViewCampaign = () => {
           description: fetchedBasicDetails[3],
           creatorAddress: fetchedBasicDetails[0],
           minContribution: parseFloat(fetchedBasicDetails[4]),
+          daysLeft: parseFloat(fetchedBasicDetails[5]),
         });
 
         setFinancialDetails({
           goal: parseFloat(fetchedFinancialDetails[0]),
           balance: parseFloat(fetchedFinancialDetails[1]),
           noOfContributors: parseFloat(fetchedFinancialDetails[2]),
-          daysLeft: fetchedFinancialDetails.daysLeft,
+     
         });
 
         setContributors(fetchedContributors);
@@ -113,6 +115,7 @@ const ViewCampaign = () => {
               <FundCard
                 campaign={financialDetails}
                 minContribution={basicDetails?.minContribution}
+                deadline={basicDetails.daysLeft}
                 campaignId={basicDetails?.id}
                 refreshCampaign={() => {}}
                 setOnFund={setOnFund}

@@ -84,9 +84,7 @@ contract CharityDonation {
     ) public {
         uint256 totalDuration = (_days * 1 days) + (_hours * 1 hours) + (_minutes * 1 minutes);
         require(totalDuration > 0, "Total duration must be greater than zero");
-
         uint256 deadline = block.timestamp + totalDuration;
-
         Campaign storage newCampaign = campaigns[campaignCount];
         newCampaign.id = campaignCount;
         newCampaign.title = _title;
@@ -99,7 +97,6 @@ contract CharityDonation {
         newCampaign.owner = msg.sender;
         newCampaign.request = Request({reqMsg: "", requested: false});
         newCampaign.exists = true;
-
         emit CampaignAdded(campaignCount, _title, _goal, newCampaign.deadline);
         campaignCount++;
     }
