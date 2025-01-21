@@ -6,7 +6,9 @@ import FundCard from '@/components/FundCard';
 import VoteCard from '@/components/VoteCard';
 import TitleCard from '@/components/TitleCard'; 
 import DisplayImage from '@/components/DisplayImage';
+import Refund from '@/components/Refund';
 import { ethers } from 'ethers';
+import ViewUpdates from '@/components/ViewUpdates';
 
 const FundCampaign = () => {
   const { id } = useParams();
@@ -17,9 +19,20 @@ const FundCampaign = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [onFund, setOnFund] = useState(false);
+  const { contract,signer } = useContract();
+  const [show,setShow]=useState(false)
+  const [refund,isRefunded]=useState(false)
 
-  const { contract } = useContract();
-
+  const isRefund=()=>{
+  isRefunded(true)
+  }
+  useEffect(() => {
+    if (refund) {
+     isRefunded(false);
+     setShow(false)
+    }
+  }, [refund]);
+  
   const handleVote = async (campaignId) => {
     try {
       await contract.voteForCampaign(campaignId);
@@ -39,6 +52,34 @@ const FundCampaign = () => {
   };
 
   useEffect(() => {
+    const checkConditions = async () => {
+      try {
+        // Check if the user is a contributor
+        const isContributor = await contract.isContributor(id);
+        // Check if the user has voted
+        const hasVoted = await contract.getContributorsIfVoted(id);
+        // Check if the deadline is reached
+        const isDeadlineReached = await contract.isDeadlineReached(id);
+
+        const VotesInFavour=await contract.isVotesInFavour(id);
+
+        // If the user is a contributor, has not voted, and the deadline is not reached, show the refund button
+        if ((isContributor && !hasVoted && !isDeadlineReached) || (isContributor && isDeadlineReached && !VotesInFavour )) {
+          setShow(true);
+        }
+      } catch (error) {
+        console.error("Error checking conditions:", error);
+      }
+    };
+
+    checkConditions(); // Call the async function
+
+}, [id, contract,onFund,refund]); // Dependency array - run this effect whenever `id` or `contract` changes
+
+
+  useEffect(() => {
+    
+   
     const fetchCampaignDetails = async () => {
       try {
         setIsLoading(true);
@@ -79,7 +120,7 @@ const FundCampaign = () => {
     };
 
     fetchCampaignDetails();
-  }, [id, contract, onFund]);
+  }, [id, contract, onFund,refund]);
 
   if (isLoading) return <p className="text-center text-purple-700 mt-20">Loading...</p>;
   if (error) return <p className="text-center text-red-600 mt-20">{error}</p>;
@@ -106,6 +147,9 @@ const FundCampaign = () => {
                 contributors={contributors}
                 id={id}
               />
+              <div  className="md:col-span-5">
+              <ViewUpdates campaignId={id}/>
+              </div>
             </div>
             <div>
               <FundCard
@@ -117,6 +161,10 @@ const FundCampaign = () => {
                 deadline={basicDetails.daysLeft}
               />
               <VoteCard campaignId={basicDetails?.id} onVote={handleVote} />
+              {
+                show && <Refund campaignId={id} isRefund={isRefund}/>
+              }
+             
             </div>
           </div>
         </div>

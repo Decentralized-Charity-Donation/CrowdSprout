@@ -7,6 +7,9 @@ import TitleCard from '@/components/TitleCard';
 import Updates from '@/components/Updates';
 import Upload from '@/components/Upload';
 import RequestWithdrawalCard from '@/components/RequestWithdrawalCard';
+import { ViewIcon } from 'lucide-react';
+import ViewUpdates from '@/components/ViewUpdates';
+
 
 
 const ViewCampaign = () => {
@@ -110,6 +113,7 @@ const ViewCampaign = () => {
                 contributors={contributors}
                 id={id}
               />
+              
             </div>
             <div>
               <FundCard
@@ -122,10 +126,15 @@ const ViewCampaign = () => {
               />
               <RequestWithdrawalCard campaignId={basicDetails?.id} onVote={handleVote} />
               <Updates campaignId={id} />
+              <ViewUpdates campaignId={id}/>
             </div>
+            
           </div>
+          
         </div>
+        
       </div>
+     
     </div>
   );
 };

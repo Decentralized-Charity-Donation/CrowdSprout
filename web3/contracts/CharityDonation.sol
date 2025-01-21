@@ -44,7 +44,7 @@ contract CharityDonation {
     mapping(address => Owner) public owners;
     mapping(uint => Campaign) public campaigns;
     mapping(uint => string) public cardImage;
-    mapping(uint => Update[]) public update; 
+    mapping(uint256 => Update[]) public updates;
     uint public campaignCount = 0;
 
     event CampaignAdded(uint campaignId, string title, uint goal, uint deadline);
@@ -64,6 +64,13 @@ contract CharityDonation {
         require(campaigns[campaignId].contributions[msg.sender] > 0, "Only contributors can call this function");
         _;
     }
+
+
+
+
+
+
+
 
     function addOwner(string memory _ownerName) public {
         require(owners[msg.sender].owner == address(0), "Owner already exists");
@@ -101,28 +108,7 @@ contract CharityDonation {
         campaignCount++;
     }
 
-    function addUpdate(
-        uint campaignId,
-        string memory updateTitle,
-        string memory updateDescription,
-        string[] memory updateImages
-    ) public onlyOwner(campaignId) {
-        require(campaigns[campaignId].exists, "Campaign does not exist");
 
-        Update memory newUpdate;
-        newUpdate.title = updateTitle;
-        newUpdate.description = updateDescription;
-        newUpdate.images = updateImages;
-        newUpdate.timestamp = block.timestamp;
-       update[campaignId].push(newUpdate);
-    }
-
-
-   function updateCardImage(uint campaignId, string memory imageUrl) public {
-        require(campaigns[campaignId].exists, "Campaign does not exist");
-        require(msg.sender == campaigns[campaignId].owner, "Only owner can update card image");
-        cardImage[campaignId] = imageUrl;
-    }
 
 
     function getOwner(address ownerAddress) public view returns (address, string memory, bool) {
@@ -138,7 +124,7 @@ contract CharityDonation {
         uint minContribution,
         uint deadline
     ) {
-        require(campaigns[_id].exists, "Campaign does not exist");
+        
 
         return (
             campaigns[_id].owner,
@@ -155,7 +141,7 @@ contract CharityDonation {
         uint balance,
         uint noOfContributors
     ) {
-        require(campaigns[_id].exists, "Campaign does not exist");
+        
 
         return (
             campaigns[_id].goal,
@@ -168,7 +154,7 @@ contract CharityDonation {
         bool requestStatus,
         uint votesInFavor
     ) {
-        require(campaigns[_id].exists, "Campaign does not exist");
+        
 
         return (
             campaigns[_id].request.requested,
@@ -184,19 +170,68 @@ contract CharityDonation {
         return campaigns[campaignId].contributorList;
     }
 
+
+
+
+
+
+
+
+
+
+       function addUpdate(
+        uint256 campaignId,
+        string memory updateTitle,
+        string memory updateDescription,
+        string[] memory updateImages
+    ) public onlyOwner(campaignId) {
+        require(campaigns[campaignId].exists, "Campaign does not exist");
+        require(msg.sender==campaigns[campaignId].owner,"Not owner");
+        Update memory newUpdate;
+        newUpdate.title = updateTitle;
+        newUpdate.description = updateDescription;
+        newUpdate.images = updateImages;
+        newUpdate.timestamp = block.timestamp;
+        updates[campaignId].push(newUpdate);
+    }
+
+
+   function updateCardImage(uint campaignId, string memory imageUrl) public {
+        require(campaigns[campaignId].exists, "Campaign does not exist");
+        require(msg.sender == campaigns[campaignId].owner, "Only owner can update card image");
+        cardImage[campaignId] = imageUrl;
+    }
+
+
     
 
-    function getUpdates(uint campaignId) public view returns (Update[] memory) {
-        require(campaigns[campaignId].exists, "Campaign does not exist");
-        return update[campaignId];
-    }
+   function getUpdates(uint256 campaignId)
+    public
+    view
+    returns (Update[] memory)
+{
+    
+    return updates[campaignId];
+}
 
- 
+
 
     function getCardImage(uint campaignId) public view returns (string memory) {
-        require(campaigns[campaignId].exists, "Campaign does not exist");
+       
         return cardImage[campaignId];
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     function fund(uint256 campaignId) public payable {
         require(msg.value >= campaigns[campaignId].minContribution, "Must fund amount greater than min contribution");
@@ -222,19 +257,27 @@ contract CharityDonation {
         emit WithdrawalRequested(campaignId, _description);
     }
 
+
+
+
+
+
+
+
+
     function voteForWithdrawal(uint campaignId) public {
         Campaign storage campaign = campaigns[campaignId];
-        require(campaign.request.requested, "No withdrawal request available");
+        //require(campaign.request.requested, "No withdrawal request available");
         require(campaign.contributions[msg.sender] > 0, "Only contributors can vote");
         require(!campaign.contributorsVoted[msg.sender], "Already voted");
         campaign.contributorsVoted[msg.sender] = true;
         campaign.votesInFavor++;
         emit VoteCasted(campaignId, msg.sender);
     }
+
     
 function ownerWithdraw(uint campaignId) public {
     Campaign storage campaign = campaigns[campaignId];
-
     require(msg.sender == campaign.owner, "Only the owner can withdraw");
     require(block.timestamp >= campaign.deadline, "Deadline not reached");
     require(campaign.votesInFavor > campaign.noOfContributors / 2, "Votes are less than 50% of contributors");
@@ -243,8 +286,12 @@ function ownerWithdraw(uint campaignId) public {
     campaign.balance = 0;
     campaign.exists=false;
     payable(campaign.owner).transfer(amount);
-  
 }
+
+
+
+
+
 
 
 function refundContributors(uint campaignId) private {
@@ -262,7 +309,14 @@ function refundContributors(uint campaignId) private {
             break; 
         }
     }
+    campaign.exists=false;
 }
+
+
+
+
+
+
 
 function _removeContributor(uint campaignId, uint index) private {
     Campaign storage campaign = campaigns[campaignId];
@@ -272,6 +326,14 @@ function _removeContributor(uint campaignId, uint index) private {
     campaign.contributorList.pop();
 }
 
+
+
+
+
+
+
+
+
   function getCampaignCount() public view returns (uint) {
     return campaignCount;
 }
@@ -280,5 +342,78 @@ function _removeContributor(uint campaignId, uint index) private {
         return campaigns[campaignId].balance;
     }
 
-   
+function getContributorsIfVoted(uint campaignId) public view returns (bool){
+    return campaigns[campaignId].contributorsVoted[msg.sender];
+}
+
+function isContributor(uint campaignId) public view returns (bool){
+    return campaigns[campaignId].contributions[msg.sender]>0 ;
+}
+
+
+
+
+
+function refundMyContribution(uint campaignId) public {
+    Campaign storage campaign = campaigns[campaignId];
+
+    
+    uint contributedAmount = campaign.contributions[msg.sender];
+    require(contributedAmount > 0, "You have not contributed to this campaign");
+    require(campaign.contributorsVoted[msg.sender] == false, "You have already voted, no refund");
+    //require(campaign.deadline<block.timestamp,"Deadline is reached");
+    // Refund the contributor
+    payable(msg.sender).transfer(contributedAmount);
+
+    // Update campaign balance
+    campaign.balance -= contributedAmount;
+    campaign.contributions[msg.sender] = 0;
+
+    // Optionally, remove the contributor from the list
+    _removeContributor(campaignId, msg.sender);
+}
+
+function _removeContributor(uint campaignId, address contributor) internal {
+    Campaign storage campaign = campaigns[campaignId];
+    uint index;
+    bool found = false;
+    for (uint i = 0; i < campaign.contributorList.length; i++) {
+        if (campaign.contributorList[i] == contributor) {
+            index = i;
+            found = true;
+            break;
+        }
+    }
+
+    require(found, "Contributor not found");
+    uint lastIndex = campaign.contributorList.length - 1;
+    campaign.contributorList[index] = campaign.contributorList[lastIndex];
+    campaign.contributorList.pop();
+    campaign.contributions[contributor] = 0;
+    campaign.noOfContributors--;
+}
+
+
+
+function isDeadlineReached(uint campaignId) public view returns (bool) {
+    Campaign storage campaign = campaigns[campaignId];
+    if (block.timestamp >= campaign.deadline) {
+        return true;  
+    } else {
+        return false; 
+    }
+}
+
+function isVotesInFavour(uint campaignId) public view returns (bool) {
+    Campaign storage campaign = campaigns[campaignId];
+    return campaign.votesInFavor > campaign.noOfContributors / 2;
+}
+
+
+function exists(uint campaignId) public view returns (bool){
+     Campaign storage campaign = campaigns[campaignId];
+    return campaign.exists;
+}
+
+
 }

@@ -11,58 +11,45 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import axios from "axios";
+import { PinataSDK } from "pinata-web3";
 
-const UpdatesInfo = ({ closeModal, campaignId, onSubmit }) => {
+const UpdatesInfo = ({ closeModal, campaignId }) => {
   const { contract } = useContract();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [imageFiles, setImageFiles] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const pinataApiKey = "4f474e6170f0ba4fe59e";
-  const pinataApiSecret =
-    "1c39228bc0c9c3eaf6835071d77dde55496dc279d45bd86d797885cceda81eb6";
+  const pinata = new PinataSDK({
+    pinataJwt:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI0MWYxMDA4ZC0zZmYwLTRjYzQtODI1MC0xN2JkNGU4MGJhZTgiLCJlbWFpbCI6InZpbmF5YWdhbmdhZGhhcjIwMDRAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjRmNDc0ZTYxNzBmMGJhNGZlNTllIiwic2NvcGVkS2V5U2VjcmV0IjoiMWMzOTIyOGJjMGM5YzNlYWY2ODM1MDcxZDc3ZGRlNTU0OTZkYzI3OWQ0NWJkODZkNzk3ODg1Y2NlZGE4MWViNiIsImV4cCI6MTc2NTE4NzIwMH0.t52SfjIcD9n-Qs0exomJhEfuTP2mojXUNV8D2vuoTO8",
+    pinataGateway:"fuchsia-late-magpie-847.mypinata.cloud",
+  });
 
-  const handleFileUpload = async (file) => {
-    if (!file.type.startsWith("image/")) {
-      setError("Only image files are allowed.");
-      return null;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      setError("File size must be less than 5MB.");
-      return null;
-    }
+  const handleFileChange = (e) => {
+    setFiles(Array.from(e.target.files));
+  };
 
-    const formData = new FormData();
-    formData.append("file", file);
-    const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-
-    const config = {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        pinata_api_key: pinataApiKey,
-        pinata_secret_api_key: pinataApiSecret,
-      },
-      onUploadProgress: (progressEvent) => {
-        if (progressEvent.total) {
-          setUploadProgress(
-            Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          );
-        }
-      },
-    };
-
+  const uploadToPinata = async (files) => {
     try {
-      const response = await axios.post(url, formData, config);
-      return response.data.IpfsHash;
+      setIsUploading(true);
+      const uploadPromises = files.map(async (file) => {
+        const fileContent = await file.arrayBuffer();
+        const fileBlob = new Blob([fileContent], { type: file.type });
+        const fileToUpload = new File([fileBlob], file.name, { type: file.type });
+        const response = await pinata.upload.file(fileToUpload);
+        return response?.IpfsHash; 
+      });
+      const cids = await Promise.all(uploadPromises);
+      console.log(cids)
+      setIsUploading(false);
+      return cids;
     } catch (error) {
-      console.error("Error uploading file to Pinata:", error);
-      setError("Error uploading image. Please try again.");
-      return null;
+      setIsUploading(false);
+      console.error("Error uploading files to Pinata:", error);
+      setError("Failed to upload images. Please try again.");
+      return [];
     }
   };
 
@@ -70,21 +57,16 @@ const UpdatesInfo = ({ closeModal, campaignId, onSubmit }) => {
     e.preventDefault();
     setError(null);
 
-    if (!title.trim() || !description.trim() || imageFiles.length === 0) {
+    if (!title.trim() || !description.trim() || files.length === 0) {
       setError("All fields are required.");
       return;
     }
 
-    const uploadedCids = [];
-    for (const file of imageFiles) {
-      const cid = await handleFileUpload(file);
-      if (cid) {
-        uploadedCids.push(cid);
-      }
-    }
+    const imageCids = await uploadToPinata(files);
+    console.log(imageCids);
 
-    if (uploadedCids.length === 0) {
-      setError("No images uploaded successfully.");
+    if (!imageCids.length) {
+      setError("Image upload failed.");
       return;
     }
 
@@ -93,20 +75,18 @@ const UpdatesInfo = ({ closeModal, campaignId, onSubmit }) => {
       return;
     }
 
-    setLoading(true);
-    console.log( title, description, uploadedCids)
     try {
+      setLoading(true);
       const tx = await contract.addUpdate(
-        campaignId,
+        BigInt(campaignId),
         title.trim(),
         description.trim(),
-        uploadedCids
+        imageCids
       );
       await tx.wait();
-      onSubmit(false);
       closeModal();
     } catch (error) {
-      console.error("Error adding update:", error);
+      console.error("Error adding update to contract:", error);
       setError("Failed to add update. Please try again.");
     } finally {
       setLoading(false);
@@ -121,7 +101,7 @@ const UpdatesInfo = ({ closeModal, campaignId, onSubmit }) => {
           <CardDescription>Enter the details for your update.</CardDescription>
         </CardHeader>
         <CardContent>
-          {error && <div className="error-message">{error}</div>}
+          {error && <div className="text-red-500">{error}</div>}
           <form onSubmit={handleSubmit} id="updateForm">
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
@@ -148,21 +128,21 @@ const UpdatesInfo = ({ closeModal, campaignId, onSubmit }) => {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="image">Add Images</Label>
+                <Label htmlFor="files">Upload Images</Label>
                 <Input
                   type="file"
-                  id="image"
+                  id="files"
                   accept="image/*"
                   multiple
-                  onChange={(e) => setImageFiles([...e.target.files])}
+                  onChange={handleFileChange}
                   required
                 />
               </div>
             </div>
           </form>
-          {uploadProgress > 0 && (
+          {isUploading && (
             <div className="progress-bar">
-              <div style={{ width: `${uploadProgress}%` }}></div>
+              <div className="bg-blue-500 h-2" style={{ width: "50%" }}></div>
             </div>
           )}
         </CardContent>
@@ -170,7 +150,7 @@ const UpdatesInfo = ({ closeModal, campaignId, onSubmit }) => {
           <Button variant="outline" onClick={closeModal} disabled={loading}>
             Cancel
           </Button>
-          <Button type="submit" form="updateForm" disabled={loading}>
+          <Button type="submit" form="updateForm" disabled={loading || isUploading}>
             {loading ? "Submitting..." : "Submit"}
           </Button>
         </CardFooter>

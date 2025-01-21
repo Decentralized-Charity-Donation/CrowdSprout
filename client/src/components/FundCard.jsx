@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useContract } from '@/ContractContext/ContractContext';
 import { ethers } from 'ethers';
 import CountdownTimer from '@/components/CountdownTimer';
@@ -6,7 +6,21 @@ import CountdownTimer from '@/components/CountdownTimer';
 const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setOnFund ,deadline}) => {
   const [donationAmount, setDonationAmount] = useState('');
   const { contract, signer, isOwner } = useContract();
+  const [isDeadlineReached, setIsDeadlineReached] = useState(false); // State for deadline status
 
+  useEffect(() => {
+    const fetchDeadlineStatus = async () => {
+      try {
+        const deadlineStatus = await contract.isDeadlineReached(campaignId); // Call the smart contract function
+        setIsDeadlineReached(deadlineStatus); // Update the state
+      } catch (error) {
+        console.error('Error checking deadline status:', error);
+      }
+    };
+  
+    fetchDeadlineStatus();
+  }, [contract, campaignId]); // Run the effect whenever contract or campaignId changes
+  
   const handleDonate = async (e) => {
     e.preventDefault();
 
@@ -21,6 +35,13 @@ const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setO
     }
 
     try {
+      const deadlineStatus = await contract.isDeadlineReached(campaignId);
+      if(deadlineStatus){
+        alert("Campaign Ended")
+        isDeadlineReached(true)
+        return
+      }
+      
       const tx = await contract.fund(campaignId, { value: donationAmount });
       await tx.wait();
       alert('Donation successful!');
@@ -93,11 +114,22 @@ const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setO
             {donationAmount < minContribution && donationAmount !== '' && `Minimum contribution is ${minContribution} ETH`}
           </p>
           <button
-            type="submit"
-            className={`mt-4 w-full py-3 rounded-md text-white font-medium ${'bg-purple-700 hover:bg-purple-600'}`}
-          >
-            Fund Campaign
-          </button>
+  type="submit"
+  className={`mt-4 w-full py-3 rounded-md text-white font-medium ${
+    isDeadlineReached
+      ? 'bg-gray-400 cursor-not-allowed' // Grey out button if deadline is reached
+      : 'bg-purple-700 hover:bg-purple-600'
+  }`}
+  disabled={isDeadlineReached} // Disable button if deadline reached
+>
+  Fund Campaign
+</button>
+{isDeadlineReached && (
+  <p className="text-sm text-red-600 mt-2">
+    The deadline has passed. You can no longer fund this campaign.
+  </p>
+)}
+
         </form>
       }
     </div>
