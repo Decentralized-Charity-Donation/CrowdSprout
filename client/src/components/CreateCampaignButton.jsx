@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
-import OwnerInfo from './OwnerInfo';
-import CreateCampaign from './CreateCampaign';
-import { useContract } from '@/ContractContext/ContractContext';
-import handleLogOut from './handleLogOut'; // Import the handleLogOut function
+import React, { useState } from "react";
+import Modal from "react-modal";
+import OwnerInfo from "./OwnerInfo";
+import CreateCampaign from "./CreateCampaign";
+import { useContract } from "@/ContractContext/ContractContext";
+import handleLogOut from "./handleLogOut"; // Import the handleLogOut function
 
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
-const CreateCampaignButton = ({ addNewCampaign, fetchCampaigns,setclickedSubmit}) => {
+const CreateCampaignButton = ({
+  addNewCampaign,
+  fetchCampaigns,
+  setclickedSubmit,
+  setShowExpired,
+  showExpired,
+}) => {
   const { contract, signer } = useContract();
   const [showOwnerModal, setShowOwnerModal] = useState(false);
   const [showCreateCampaignModal, setShowCreateCampaignModal] = useState(false);
@@ -21,7 +27,7 @@ const CreateCampaignButton = ({ addNewCampaign, fetchCampaigns,setclickedSubmit}
         setShowCreateCampaignModal(true);
       }
     } catch (error) {
-      console.error('Error verifying owner:', error);
+      console.error("Error verifying owner:", error);
     }
   };
 
@@ -31,17 +37,26 @@ const CreateCampaignButton = ({ addNewCampaign, fetchCampaigns,setclickedSubmit}
       setShowCreateCampaignModal(false);
       await fetchCampaigns();
     } catch (error) {
-      console.error('Error creating campaign:', error);
+      console.error("Error creating campaign:", error);
     }
   };
 
   return (
     <div>
-      <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-md flex items-center justify-between px-6 py-2" style={{ height: '50px' }}>
+      <div
+        className="fixed top-0 left-0 w-full z-50 bg-white shadow-md flex items-center justify-between px-6 py-2"
+        style={{ height: "50px" }}
+      >
         <div className="text-xl font-bold flex-shrink-0">
           {/* Navbar Content */}
         </div>
         <div className="flex space-x-4 ml-auto">
+          <button
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-full transition duration-300"
+            onClick={() => setShowExpired(!showExpired)}
+          >
+            {showExpired ? "Ongoing Campaigns" : "Ended Campaigns"}
+          </button>
           <button
             onClick={handleOwnerSubmit}
             className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-full transition duration-300"
@@ -63,14 +78,14 @@ const CreateCampaignButton = ({ addNewCampaign, fetchCampaigns,setclickedSubmit}
         onRequestClose={() => setShowOwnerModal(false)}
         contentLabel="Owner Info Modal"
         style={{
-          overlay: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+          overlay: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
           content: {
-            width: '400px',
-            height: '300px',
-            margin: 'auto',
-            borderRadius: '10px',
-            padding: '20px',
-            boxSizing: 'border-box',
+            width: "400px",
+            height: "300px",
+            margin: "auto",
+            borderRadius: "10px",
+            padding: "20px",
+            boxSizing: "border-box",
           },
         }}
       >
@@ -89,8 +104,8 @@ const CreateCampaignButton = ({ addNewCampaign, fetchCampaigns,setclickedSubmit}
         onRequestClose={() => setShowCreateCampaignModal(false)}
         contentLabel="Create Campaign Modal"
         style={{
-          overlay: { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-          content: { maxWidth: '500px', margin: 'auto', borderRadius: '10px' },
+          overlay: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
+          content: { maxWidth: "500px", margin: "auto", borderRadius: "10px" },
         }}
       >
         <CreateCampaign

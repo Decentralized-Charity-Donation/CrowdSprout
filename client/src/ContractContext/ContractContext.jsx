@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
-import contractJson from '../../../web3/artifacts/contracts/CharityDonation.sol/CharityDonation.json';
+
 
 const ContractContext = createContext();
 
@@ -11,8 +11,8 @@ export const ContractProvider = ({ children }) => {
   const [contract, setContract] = useState(null);
   const [isOwner, setIsOwner] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3'; 
-  const contractABI = contractJson.abi;
+  const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS; 
+  const contractABI = import.meta.env.VITE_ABI;
 
   const wallet = async () => {
     if (window.ethereum) {

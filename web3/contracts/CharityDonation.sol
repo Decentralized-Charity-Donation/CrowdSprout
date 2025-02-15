@@ -415,5 +415,11 @@ function exists(uint campaignId) public view returns (bool){
     return campaign.exists;
 }
 
+  function isStoredTimeExpired(uint campaignId) public view returns (bool) {
+        return campaigns[campaignId].deadline < block.timestamp;
+    }
 
 }
+
+
+

@@ -30,13 +30,14 @@ const AllCampaigns = () => {
       const campaignCount = await contract.getCampaignCount();
 
       for (let i = 0; i < campaignCount; i++) {
+        
         const campaignDetails = await contract.getCampaignBasicDetails(i);
-        const campaignImageCid = await contract.getCardImage(campaignDetails.id); // Fetch CID for image
+        const campaignImageCid = await contract.getCardImage(campaignDetails.id); 
         campaigns.push({
           id: campaignDetails.id,
           title: campaignDetails.title,
           description: campaignDetails.description,
-          imageCid: campaignImageCid, // Add image CID to campaign details
+          imageCid: campaignImageCid, 
         });
       }
 
