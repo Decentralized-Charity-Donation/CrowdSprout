@@ -147,9 +147,7 @@ const FundCampaign = () => {
                 contributors={contributors}
                 id={id}
               />
-              <div  className="md:col-span-5">
-              <ViewUpdates campaignId={id}/>
-              </div>
+              
             </div>
             <div>
               <FundCard
@@ -168,6 +166,9 @@ const FundCampaign = () => {
             </div>
           </div>
         </div>
+        <div  className="md:col-span-5">
+              <ViewUpdates campaignId={id}/>
+              </div>
       </div>
     </div>
   );

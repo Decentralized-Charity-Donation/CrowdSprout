@@ -69,7 +69,7 @@ const CreateCampaign = ({ closeModal, setclickedSubmit }) => {
         <h2 className="text-3xl font-extrabold text-gray-900 mb-6 text-center">
           Create a New Campaign
         </h2>
-        <div className="modal-content max-h-[80vh]">
+        <div className="modal-content max-h-[92vh]">
           <form onSubmit={handleCampaignSubmit}>
             <div className="mb-5">
               <label className="block text-gray-700 font-medium mb-2">Campaign Title</label>

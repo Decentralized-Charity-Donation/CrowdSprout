@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PinataSDK } from "pinata-web3";
 
-const UpdatesInfo = ({ closeModal, campaignId }) => {
+const UpdatesInfo = ({ closeModal, campaignId ,setLoad}) => {
   const { contract } = useContract();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -56,7 +56,7 @@ const UpdatesInfo = ({ closeModal, campaignId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-
+   
     if (!title.trim() || !description.trim() || files.length === 0) {
       setError("All fields are required.");
       return;
@@ -85,6 +85,7 @@ const UpdatesInfo = ({ closeModal, campaignId }) => {
       );
       await tx.wait();
       closeModal();
+      setLoad(true)
     } catch (error) {
       console.error("Error adding update to contract:", error);
       setError("Failed to add update. Please try again.");

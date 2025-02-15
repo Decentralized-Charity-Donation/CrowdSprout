@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useContract } from "@/ContractContext/ContractContext";
 
-const ViewUpdates = ({ campaignId }) => {
+const ViewUpdates = ({ campaignId, load }) => {
   const { contract } = useContract();
   const [updates, setUpdates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,32 +11,36 @@ const ViewUpdates = ({ campaignId }) => {
   const [modalImageIndex, setModalImageIndex] = useState(0);
   const [startTouch, setStartTouch] = useState(0);
 
-  useEffect(() => {
-    const fetchUpdates = async () => {
-      if (!contract) {
-        setError("Contract not connected.");
-        setLoading(false);
-        return;
-      }
+  useEffect(
+    () => {
+      const fetchUpdates = async () => {
+        if (!contract) {
+          setError("Contract not connected.");
+          setLoading(false);
+          return;
+        }
 
-      try {
-        const result = await contract.getUpdates(campaignId);
-        const structuredUpdates = result.map((item) => ({
-          title: item[0] || "No title available",
-          description: item[1] || "No description available",
-          images: Array.isArray(item[2]) ? item[2] : [],
-        }));
-        setUpdates(structuredUpdates);
-      } catch (err) {
-        console.error("Error fetching updates:", err);
-        setError("Failed to fetch updates.");
-      } finally {
-        setLoading(false);
-      }
-    };
+        try {
+          const result = await contract.getUpdates(campaignId);
+          const structuredUpdates = result.map((item) => ({
+            title: item[0] || "No title available",
+            description: item[1] || "No description available",
+            images: Array.isArray(item[2]) ? item[2] : [],
+          }));
+          setUpdates(structuredUpdates);
+        } catch (err) {
+          console.error("Error fetching updates:", err);
+          setError("Failed to fetch updates.");
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchUpdates();
-  }, []);
+      fetchUpdates();
+    },
+    [load],
+    []
+  );
 
   const openModal = (updateIndex, imageIndex) => {
     setCurrentUpdateIndex(updateIndex);
@@ -89,13 +93,23 @@ const ViewUpdates = ({ campaignId }) => {
 
   if (error) return <div className="text-red-500">{error}</div>;
 
-  if (updates.length === 0) return <div className="text-gray-400">No updates available for this campaign.</div>;
+  if (updates.length === 0)
+    return (
+      <div className="text-gray-400">
+        No updates available for this campaign.
+      </div>
+    );
 
   return (
-    <div className="bg-gray-100 p-6 mt-6">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">Updates</h2>
+    <div className="bg-gray-100 p-6 m-5">
+    <h1 className="text-lg font-bold text-gray-800 mb-4">Updates</h1>
+
+    <div className="grid grid-cols-3 gap-4">
       {updates.map((update, updateIndex) => (
-        <div key={updateIndex} className="bg-white p-4 rounded-lg shadow-lg mb-4">
+        <div
+          key={updateIndex}
+          className="bg-white p-4 rounded-lg shadow-lg"
+        >
           <p className="mb-2">
             <strong>{update.title}</strong>
           </p>
@@ -106,7 +120,7 @@ const ViewUpdates = ({ campaignId }) => {
                 <img
                   src={`https://ipfs.io/ipfs/${update.images[0]}`}
                   alt={`Update Image 1`}
-                  className="w-100 h-auto rounded-lg shadow-md mb-2 cursor-pointer"
+                  className="w-full h-auto rounded-lg shadow-md mb-2 cursor-pointer"
                   onClick={() => openModal(updateIndex, 0)}
                 />
               </div>
@@ -116,6 +130,8 @@ const ViewUpdates = ({ campaignId }) => {
           </div>
         </div>
       ))}
+    </div>
+
 
       {modalOpen && (
         <div
@@ -123,10 +139,11 @@ const ViewUpdates = ({ campaignId }) => {
           onTouchStart={handleTouchStart}
           onTouchEnd={handleSwipe}
         >
-          <div className="bg-white p-4 rounded-lg max-w-md mx-auto relative">
-            <div className="flex justify-between items-center">
+          <div className="bg-white p-2 rounded-lg max-w-3xl mx-auto relative">
+            <div className="py-4 flex justify-between items-center">
+             
               <button
-                className="text-xl text-gray-700"
+                className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 text-2xl hover:bg-gray-400 transition"
                 onClick={closeModal}
               >
                 &times;
@@ -147,7 +164,7 @@ const ViewUpdates = ({ campaignId }) => {
             <img
               src={`https://ipfs.io/ipfs/${updates[currentUpdateIndex]?.images[modalImageIndex]}`}
               alt={`Modal Image ${modalImageIndex + 1}`}
-              className="w-full h-auto mt-4 cursor-pointer"
+              className="w-full h-full object-contain max-h-[90vh] max-w-[90vw] cursor-pointer"
             />
           </div>
         </div>

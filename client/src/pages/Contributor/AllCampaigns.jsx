@@ -68,7 +68,7 @@ const AllCampaigns = () => {
         </button>
       </div>
 
-      <div className="bg-gray-100 py-10 mt-12">
+      <div className="min-h-screen w-full bg-gray-100 py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-8 text-center">
             Ongoing Campaigns

@@ -21,6 +21,7 @@ const ViewCampaign = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [onFund, setOnFund] = useState(false);
+  const [load,setLoad]=useState(false)
   const [imageUploaded, setImageUploaded] = useState(false); // Track if image has been uploaded
 
   const { contract } = useContract();
@@ -125,16 +126,19 @@ const ViewCampaign = () => {
                 setOnFund={setOnFund}
               />
               <RequestWithdrawalCard campaignId={basicDetails?.id} onVote={handleVote} />
-              <Updates campaignId={id} />
-              <ViewUpdates campaignId={id}/>
+              <Updates campaignId={id} setLoad={setLoad}/>
+              
+          
             </div>
-            
+       
           </div>
           
         </div>
-        
+      
+        <ViewUpdates  campaignId={id} load={load}/>
+       
       </div>
-     
+
     </div>
   );
 };

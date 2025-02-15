@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import UpdatesInfo from "./UpdatesInfo";
 import { useContract } from "@/ContractContext/ContractContext";
 
-const Updates = ({ campaignId }) => {
+const Updates = ({ campaignId,setLoad}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeadlineReached, setIsDeadlineReached] = useState(false);
   const { contract } = useContract();
@@ -42,7 +42,7 @@ const Updates = ({ campaignId }) => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-md shadow-lg">
-            <UpdatesInfo closeModal={closeModal} campaignId={campaignId} />
+            <UpdatesInfo closeModal={closeModal} campaignId={campaignId} setLoad={setLoad}/>
           </div>
         </div>
       )}

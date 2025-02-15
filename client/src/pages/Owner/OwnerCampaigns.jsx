@@ -74,12 +74,14 @@ const OwnerCampaigns = () => {
         fetchCampaigns={fetchCampaigns}
         setclickedSubmit={setClickedSubmit}
       />
-      <div className="bg-gray-100 py-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div className="min-h-screen w-full bg-gray-100 py-10">
+        <div className="  py-5">
           <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-1 text-center">
             Ongoing Campaigns
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-12">
+          </div>
+          <div className="my-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-12">
             {campaignsList.map((campaign) => (
               <div
                 key={campaign.id}
@@ -110,7 +112,6 @@ const OwnerCampaigns = () => {
               </div>
             ))}
           </div>
-        </div>
       </div>
 
       <ToastContainer />
