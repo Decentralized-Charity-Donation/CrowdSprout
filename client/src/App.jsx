@@ -9,7 +9,7 @@ import AllCampaigns from "./pages/Contributor/AllCampaigns";
 import OwnerCampaigns from "./pages/Owner/OwnerCampaigns";
 import FundCampaign from "./pages/Contributor/FundCampaign";
 import ViewCampaign from "./pages/Owner/ViewCampaign";
-import AdminPage from "./pages/AdminPage";
+import AdminPage from "./pages/Admin/AdminPage";
 
 const routes = (
   <Router>

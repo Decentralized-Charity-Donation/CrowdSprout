@@ -43,7 +43,7 @@ const OwnerInfo = ({ closeModal, onSubmit }) => {
           <CardDescription>Enter your Details.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>  {/* Add onSubmit to the form */}
+          <form onSubmit={handleSubmit}>  
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="ownerName">Owner Name</Label>
@@ -60,7 +60,7 @@ const OwnerInfo = ({ closeModal, onSubmit }) => {
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={closeModal}>Cancel</Button>
-          <Button type="submit" onClick={handleSubmit} form="ownerForm">Submit</Button> {/* Ensure the button triggers form submission */}
+          <Button type="submit" onClick={handleSubmit} form="ownerForm">Submit</Button> 
         </CardFooter>
       </Card>
     </div>

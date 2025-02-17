@@ -3,7 +3,7 @@ import Modal from "react-modal";
 import OwnerInfo from "./OwnerInfo";
 import CreateCampaign from "./CreateCampaign";
 import { useContract } from "@/ContractContext/ContractContext";
-import handleLogOut from "./handleLogOut"; // Import the handleLogOut function
+import handleLogOut from "./handleLogOut"; 
 
 Modal.setAppElement("#root");
 
@@ -48,7 +48,7 @@ const CreateCampaignButton = ({
         style={{ height: "50px" }}
       >
         <div className="text-xl font-bold flex-shrink-0">
-          {/* Navbar Content */}
+      
         </div>
         <div className="flex space-x-4 ml-auto">
           <button
@@ -64,7 +64,7 @@ const CreateCampaignButton = ({
             Create Campaign
           </button>
           <button
-            onClick={handleLogOut} // Use the handleLogOut function here
+            onClick={handleLogOut} 
             className="text-sm text-purple-600 font-semibold py-2 px-4 rounded-md hover:bg-purple-200"
           >
             Logout
@@ -72,7 +72,7 @@ const CreateCampaignButton = ({
         </div>
       </div>
 
-      {/* Owner Info Modal */}
+     
       <Modal
         isOpen={showOwnerModal}
         onRequestClose={() => setShowOwnerModal(false)}
@@ -98,7 +98,6 @@ const CreateCampaignButton = ({
         />
       </Modal>
 
-      {/* Create Campaign Modal */}
       <Modal
         isOpen={showCreateCampaignModal}
         onRequestClose={() => setShowCreateCampaignModal(false)}

@@ -2,7 +2,7 @@ import { useContract } from "@/ContractContext/ContractContext";
 import React, { useState, useEffect } from 'react';
 
 const RequestWithdrawalCard = ({ campaignId }) => {
-  const { contract } = useContract(); // Assuming contract comes from context
+  const { contract } = useContract(); 
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [didWithdraw, setDidWithdraw] = useState(false);
  
@@ -11,7 +11,7 @@ const RequestWithdrawalCard = ({ campaignId }) => {
     try {
       const exists = await contract.exists(campaignId);
       if (!exists) {
-        setIsButtonEnabled(false); // Disable if campaign does not exist
+        setIsButtonEnabled(false); 
         return;
       }
       const deadlineReached = true;
@@ -19,19 +19,17 @@ const RequestWithdrawalCard = ({ campaignId }) => {
       if (deadlineReached) {
         const votesInFavour = await contract.isVotesInFavour(campaignId);
         console.log(votesInFavour ,deadlineReached)
-        setIsButtonEnabled(votesInFavour); // Enable only if votes are in favor
+        setIsButtonEnabled(votesInFavour);
         return;
       }
 
-      // If the campaign is ongoing, disable the button
       setIsButtonEnabled(false);
     } catch (error) {
       console.error("Error checking conditions:", error);
-      setIsButtonEnabled(false); // Disable in case of errors
+      setIsButtonEnabled(false); 
     }
   };
 
-  // Run the check on component mount and whenever `campaignId` changes
   useEffect(() => {
     checkConditions();
   }, []);
@@ -41,7 +39,7 @@ const RequestWithdrawalCard = ({ campaignId }) => {
       const exists = await contract.exists(campaignId);
       if (!exists) {
         alert("Funds already withdrawn or campaign does not exist.");
-        setIsButtonEnabled(false); // Disable the button after failure
+        setIsButtonEnabled(false); 
         return;
       }
 
@@ -51,7 +49,7 @@ const RequestWithdrawalCard = ({ campaignId }) => {
         if (votes) {
           await contract.ownerWithdraw(campaignId);
           setDidWithdraw(true);
-          setIsButtonEnabled(false); // Disable button after successful withdrawal
+          setIsButtonEnabled(false); 
         } else {
           alert("50% of votes not reached :(");
           return;
@@ -61,7 +59,7 @@ const RequestWithdrawalCard = ({ campaignId }) => {
         if (votes) {
           await contract.ownerWithdraw(campaignId);
           setDidWithdraw(true);
-          setIsButtonEnabled(false); // Disable button after successful withdrawal
+          setIsButtonEnabled(false); 
         } else {
           alert("50% of votes not reached :(");
           return;
@@ -70,7 +68,7 @@ const RequestWithdrawalCard = ({ campaignId }) => {
     } catch (error) {
       console.error("Request failed:", error);
       alert("Request failed. Please try again.");
-      setIsButtonEnabled(false); // Disable button after error
+      setIsButtonEnabled(false); 
     }
   };
 
@@ -81,7 +79,7 @@ const RequestWithdrawalCard = ({ campaignId }) => {
         You can only withdraw the money if you have reached 80% of the goal and got more than 50% votes.
       </p>
 
-      {/* Show success message if withdrawal is successful */}
+     
       {didWithdraw && (
         <div className="text-green-500 font-medium mb-4">
           Withdrawal successful!
@@ -90,7 +88,7 @@ const RequestWithdrawalCard = ({ campaignId }) => {
 
       <button
         onClick={handleRequest}
-        disabled={!isButtonEnabled} // Disable the button if conditions are not met
+        disabled={!isButtonEnabled} 
         className={`mt-4 w-full py-3 rounded-md text-white font-medium ${isButtonEnabled ? "bg-purple-700 hover:bg-purple-600" : "bg-gray-400 cursor-not-allowed"}`}
       >
         Request

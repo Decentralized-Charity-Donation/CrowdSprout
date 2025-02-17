@@ -45,6 +45,7 @@ contract CharityDonation {
     mapping(uint => Campaign) public campaigns;
     mapping(uint => string) public cardImage;
     mapping(uint256 => Update[]) public updates;
+    mapping(string=>string) public approvedOwners;
     uint public campaignCount = 0;
 
     event CampaignAdded(uint campaignId, string title, uint goal, uint deadline);
@@ -69,8 +70,20 @@ contract CharityDonation {
 
 
 
+function addApprovedOwners(string memory o,string memory cid) public{
+approvedOwners[o]=cid;
+}
 
 
+
+function checkIfApprovedOwner(string memory o) public view returns (bool) {
+    return bytes(approvedOwners[o]).length > 0;
+}
+
+
+function getAllApprovedOwners() public view returns(){
+    
+}
 
     function addOwner(string memory _ownerName) public {
         require(owners[msg.sender].owner == address(0), "Owner already exists");

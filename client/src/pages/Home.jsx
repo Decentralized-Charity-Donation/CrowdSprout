@@ -7,12 +7,12 @@ import ContactUs from '../components/ContactUs';
 
 const Home = () => {
  
-  const aboutUsRef = useRef(null);    // Ref for the About Us section
-  const contactUsRef = useRef(null);  // Ref for the Contact Us section
+  const aboutUsRef = useRef(null);    
+  const contactUsRef = useRef(null);
   const homeRef = useRef(null);
   return (
     <>
-      <Navbar homeRef={homeRef}  aboutUsRef={aboutUsRef} contactUsRef={contactUsRef} /> {/* Pass refs to Navbar */}
+      <Navbar homeRef={homeRef}  aboutUsRef={aboutUsRef} contactUsRef={contactUsRef} /> 
       <div ref={homeRef}>
       <Landing />
       </div>

@@ -6,20 +6,20 @@ import CountdownTimer from '@/components/CountdownTimer';
 const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setOnFund ,deadline}) => {
   const [donationAmount, setDonationAmount] = useState('');
   const { contract, signer, isOwner } = useContract();
-  const [isDeadlineReached, setIsDeadlineReached] = useState(false); // State for deadline status
+  const [isDeadlineReached, setIsDeadlineReached] = useState(false); 
 
   useEffect(() => {
     const fetchDeadlineStatus = async () => {
       try {
-        const deadlineStatus = await contract.isDeadlineReached(campaignId); // Call the smart contract function
-        setIsDeadlineReached(deadlineStatus); // Update the state
+        const deadlineStatus = await contract.isDeadlineReached(campaignId); 
+        setIsDeadlineReached(deadlineStatus); 
       } catch (error) {
         console.error('Error checking deadline status:', error);
       }
     };
   
     fetchDeadlineStatus();
-  }, [contract, campaignId]); // Run the effect whenever contract or campaignId changes
+  }, [contract, campaignId]);
   
   const handleDonate = async (e) => {
     e.preventDefault();
@@ -117,10 +117,10 @@ const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setO
   type="submit"
   className={`mt-4 w-full py-3 rounded-md text-white font-medium ${
     isDeadlineReached
-      ? 'bg-gray-400 cursor-not-allowed' // Grey out button if deadline is reached
+      ? 'bg-gray-400 cursor-not-allowed'
       : 'bg-purple-700 hover:bg-purple-600'
   }`}
-  disabled={isDeadlineReached} // Disable button if deadline reached
+  disabled={isDeadlineReached} 
 >
   Fund Campaign
 </button>

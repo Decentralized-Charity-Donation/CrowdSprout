@@ -54,16 +54,16 @@ const FundCampaign = () => {
   useEffect(() => {
     const checkConditions = async () => {
       try {
-        // Check if the user is a contributor
+      
         const isContributor = await contract.isContributor(id);
-        // Check if the user has voted
+    
         const hasVoted = await contract.getContributorsIfVoted(id);
-        // Check if the deadline is reached
+      
         const isDeadlineReached = await contract.isDeadlineReached(id);
 
         const VotesInFavour=await contract.isVotesInFavour(id);
 
-        // If the user is a contributor, has not voted, and the deadline is not reached, show the refund button
+     
         if ((isContributor && !hasVoted && !isDeadlineReached) || (isContributor && isDeadlineReached && !VotesInFavour )) {
           setShow(true);
         }
@@ -72,9 +72,9 @@ const FundCampaign = () => {
       }
     };
 
-    checkConditions(); // Call the async function
+    checkConditions(); 
 
-}, [id, contract,onFund,refund]); // Dependency array - run this effect whenever `id` or `contract` changes
+}, [id, contract,onFund,refund]); 
 
 
   useEffect(() => {

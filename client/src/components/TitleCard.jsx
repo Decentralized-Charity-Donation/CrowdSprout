@@ -11,7 +11,7 @@ const TitleCard = ({ basicDetails, ownerDetails, contributors, id}) => {
       const contributionsData = await Promise.all(
         contributors.map(async (contributor) => {
           const res = await contract.getContributionForAddress(id, contributor);
-          return { contributor, amount: Number(res) }; // Convert from Wei to ETH
+          return { contributor, amount: Number(res) }; 
         })
       );
    

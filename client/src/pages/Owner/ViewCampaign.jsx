@@ -22,7 +22,7 @@ const ViewCampaign = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [onFund, setOnFund] = useState(false);
   const [load,setLoad]=useState(false)
-  const [imageUploaded, setImageUploaded] = useState(false); // Track if image has been uploaded
+  const [imageUploaded, setImageUploaded] = useState(false); 
 
   const { contract } = useContract();
 

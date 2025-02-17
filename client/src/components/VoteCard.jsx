@@ -83,12 +83,11 @@ const VoteCard = ({ campaignId, onVote }) => {
         Support this campaign by voting for its success. Your vote helps determine the priority and visibility of this campaign.
       </p>
 
-      {/* Red alert message if the user has voted */}
+      
       {voted && (
         <p className="text-sm text-red-600 mt-2">You have already voted!</p>
       )}
 
-      {/* Red alert message if the deadline is reached */}
       {deadlineReached && (
         <p className="text-sm text-red-600 mt-2">The deadline has passed. You cannot vote anymore.</p>
       )}
