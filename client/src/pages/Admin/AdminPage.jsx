@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import handleLogOut from '@/components/handleLogOut';
 import AdminUpload from './AdminUpload'; 
+import ApprovedOwnersTable from './ApprovedOwnersTable';
 
 const AdminPage = () => {
- 
+  const [upload, setUpload] = useState(false);
+  console.log("ADMIN PAGE: ", upload);
+
   return (
     <div>
       <div
@@ -14,7 +17,7 @@ const AdminPage = () => {
           Admin
         </div>
         <div className="ml-auto flex gap-4">
-          <AdminUpload/>
+          <AdminUpload setUpload={setUpload}/>
           <button
             onClick={handleLogOut}
             className="text-sm text-purple-600 font-semibold py-2 px-4 rounded-md hover:bg-purple-200"
@@ -23,8 +26,9 @@ const AdminPage = () => {
           </button>
         </div>
       </div>
-
-     
+      <div>
+        <ApprovedOwnersTable upload={upload} setUpload={setUpload}/>
+      </div>
     </div>
   );
 };

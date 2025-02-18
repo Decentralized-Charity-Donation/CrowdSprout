@@ -6,27 +6,31 @@ import { useNavigate } from "react-router-dom";
 const ConnectWallet = () => {
   const { wallet, isOwner, contract ,isAdmin} = useContract();
   const [connecting, setConnecting] = useState(false); 
+  const [connected,setConnected]=useState(false)
   const navigate = useNavigate();
 
 
   useEffect(() => {
-    if (connecting && contract) {
+    if (contract) {
       if(isAdmin){
         navigate("/adminPage");
       }
+      
      else if (isOwner) {
         navigate("/ownercampaigns");
-      } else {
+      } 
+      else {
         navigate("/allcampaigns");
       }
       setConnecting(false); 
     }
-  }, [contract, isOwner, connecting, navigate]);
+  }, [connected]);
 
   const connectWallet = async () => {
     setConnecting(true); 
     try {
       await wallet(); 
+      setConnected(true)
     } catch (error) {
       console.error("Error connecting to wallet:", error);
       toast.error("An error occurred. Please try again.");
@@ -49,6 +53,3 @@ const ConnectWallet = () => {
 };
 
 export default ConnectWallet;
-
-
-

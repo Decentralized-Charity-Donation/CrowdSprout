@@ -13,7 +13,7 @@ import { Label } from "../../components/ui/label";
 import { PinataSDK } from 'pinata-web3';
 import { useContract } from '@/ContractContext/ContractContext';
 
-const AdminUpload = () => {
+const AdminUpload = ({setUpload}) => {
   const [isOpenModal, setIsModalOpen] = useState(false);
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -38,18 +38,8 @@ const AdminUpload = () => {
     setFile(e.target.files[0]);
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setFile(e.dataTransfer.files[0]);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
 
 async function main() {
-    
     try {
       const fileContent = await file.arrayBuffer(); 
       const fileBlob = new Blob([fileContent], { type: file.type }); 
@@ -62,31 +52,46 @@ async function main() {
     }
   }
   
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setIsUploading(true);
+   
+
     const isApproved = await contract.checkIfApprovedOwner(address); 
+    
     if (isApproved) {
       alert("This address is already an approved owner.");
       setLoading(false);
       setIsUploading(false);
+      setIsModalOpen(false)
       return;
     }
+
+    if (!address || !/^0x[a-fA-F0-9]{40}$/.test(address)) {
+      alert("Invalid Ethereum address.");
+      setLoading(false);
+      setIsUploading(false);
+      setIsModalOpen(false);
+      return;
+    }
+    
     try {
       const upload = await main(); 
       const cid = upload;
       const tx=await contract.addApprovedOwners(address, cid);
       await tx.wait();
+     
     } catch (err) {
+      setIsModalOpen(false)
       console.error(err);
       setError("An error occurred while uploading.");
+     
     } finally {
       setLoading(false);
       setIsUploading(false);
       setIsModalOpen(false)
+      setUpload(true)
     }
   };
   
@@ -140,7 +145,7 @@ async function main() {
                 )}
               </CardContent>
               <CardFooter className="flex justify-between">
-                <Button variant="outline" onClick={closeModal} disabled={loading}>
+                <Button variant="outline" onClick={closeModal} >
                   Cancel
                 </Button>
                 <Button type="submit" form="updateForm" disabled={loading || isUploading}>

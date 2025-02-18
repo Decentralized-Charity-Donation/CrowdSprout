@@ -41,11 +41,13 @@ contract CharityDonation {
     }
 
 
+
     mapping(address => Owner) public owners;
     mapping(uint => Campaign) public campaigns;
     mapping(uint => string) public cardImage;
     mapping(uint256 => Update[]) public updates;
-    mapping(string=>string) public approvedOwners;
+    mapping(address=>string) public approvedOwners;
+    address[] public ownerArray;
     uint public campaignCount = 0;
 
     event CampaignAdded(uint campaignId, string title, uint goal, uint deadline);
@@ -66,24 +68,40 @@ contract CharityDonation {
         _;
     }
 
+    
 
 
 
-
-function addApprovedOwners(string memory o,string memory cid) public{
+function addApprovedOwners(address o,string memory cid) public{
 approvedOwners[o]=cid;
+ownerArray.push(o);
 }
 
 
 
-function checkIfApprovedOwner(string memory o) public view returns (bool) {
+function checkIfApprovedOwner(address o) public view returns (bool) {
     return bytes(approvedOwners[o]).length > 0;
 }
 
-
-function getAllApprovedOwners() public view returns(){
-    
+function checkIfAdmin(address a) public view returns(bool){
+    return a==0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
 }
+
+
+function getAllApprovedOwners() public view returns (address[] memory, string[] memory) {
+
+    uint n = ownerArray.length;
+    address[] memory addresses = new address[](n);
+    string[] memory cids = new string[](n);
+    
+    for (uint i = 0; i < n; i++) {
+        addresses[i] = ownerArray[i];
+        cids[i] = approvedOwners[ownerArray[i]];
+    }
+    
+    return (addresses, cids);
+}
+
 
     function addOwner(string memory _ownerName) public {
         require(owners[msg.sender].owner == address(0), "Owner already exists");

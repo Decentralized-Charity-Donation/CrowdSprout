@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import CreateCampaignButton from "@/components/CreateCampaignButton";
 import { Button } from "@/components/ui/button";
 
+
 const OwnerCampaigns = () => {
   const [isToastShown, setIsToastShown] = useState(false);
   const [campaignsList, setCampaignsList] = useState([]);
@@ -32,16 +33,18 @@ const OwnerCampaigns = () => {
       const campaigns = [];
       const campaignCount = await contract.getCampaignCount();
       for (let i = 0; i < campaignCount; i++) {
-        const isExpired = await contract.isStoredTimeExpired(i);
-        if (showExpired===true) {
-          if(isExpired===false){
-            continue;
-          }
+        const isExpired = await contract.isDeadlineReached(i);
+        console.log("showExpired=",i," ",showExpired)
+        console.log("isExpired=",i," ",isExpired)
+        if(showExpired){
+             if(!isExpired){
+                continue
+             }
         }
-        else {
-          if(isExpired===true){
-            continue;
-          }
+        else{
+          if(isExpired){
+            continue
+         }
         }
         const campaignDetails = await contract.getCampaignBasicDetails(i);
         const campaignImageCid = await contract.getCardImage(campaignDetails.id);

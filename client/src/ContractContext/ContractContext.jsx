@@ -36,10 +36,17 @@ export const ContractProvider = ({ children }) => {
           setContract(tempContract);
 
           const address = await tempSigner.getAddress();
-          
-          setIsOwner(address === "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" || "" ); 
+          console.log(address)
 
-          setIsAdmin(address === "0x70997970C51812dc3A010C7d01b50e0d17dc79C8")
+          const admin=await tempContract.checkIfAdmin(address) 
+          setIsAdmin(admin)
+          console.log(admin)
+
+          if(!admin){
+          const owner=await tempContract.checkIfApprovedOwner(address)
+          setIsOwner(owner)
+          console.log(owner)
+          }
 
           toast.success("Wallet connected successfully!");
         } else {
@@ -55,7 +62,7 @@ export const ContractProvider = ({ children }) => {
   };
 
   return (
-    <ContractContext.Provider value={{ wallet, signer, provider, contract, isOwner,isAdmin }}>
+    <ContractContext.Provider value={{ wallet, signer, provider, contract, isOwner,isAdmin}}>
       {children}
     </ContractContext.Provider>
   );
