@@ -125,7 +125,9 @@ const ViewUpdates = ({ campaignId, load }) => {
                 />
               </div>
             ) : (
+             
               <p>No images available for this update.</p>
+              
             )}
           </div>
         </div>
@@ -135,7 +137,7 @@ const ViewUpdates = ({ campaignId, load }) => {
 
       {modalOpen && (
         <div
-          className="fixed w-100 h-100 inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          className="fixed w-full h-full inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
           onTouchStart={handleTouchStart}
           onTouchEnd={handleSwipe}
         >
@@ -157,14 +159,14 @@ const ViewUpdates = ({ campaignId, load }) => {
             </button>
             <button
               onClick={handleNextImage}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-xl text-white bg-gray-700 p-2 rounded-full"
+              className="w-100 h-100 absolute right-2 top-1/2 transform -translate-y-1/2 text-xl text-white bg-gray-700 p-2 rounded-full"
             >
               &gt;
             </button>
             <img
               src={`https://ipfs.io/ipfs/${updates[currentUpdateIndex]?.images[modalImageIndex]}`}
               alt={`Modal Image ${modalImageIndex + 1}`}
-              className="w-full h-full object-contain max-h-[90vh] max-w-[90vw] cursor-pointer"
+              className="w-[600px] h-full object-contain max-h-[90vh] max-w-[90vw] cursor-pointer"
             />
           </div>
         </div>

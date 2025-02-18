@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useContract } from '@/ContractContext/ContractContext';
-import handleLogOut from '@/components/handleLogOut';
-import FundCard from '@/components/FundCard';
-import TitleCard from '@/components/TitleCard'; 
-import Updates from '@/components/Updates';
-import Upload from '@/components/Upload';
-import RequestWithdrawalCard from '@/components/RequestWithdrawalCard';
-import { ViewIcon } from 'lucide-react';
-import ViewUpdates from '@/components/ViewUpdates';
-
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useContract } from "@/ContractContext/ContractContext";
+import handleLogOut from "@/components/handleLogOut";
+import FundCard from "@/components/FundCard";
+import TitleCard from "@/components/TitleCard";
+import Updates from "@/components/Updates";
+import Upload from "@/components/Upload";
+import RequestWithdrawalCard from "@/components/RequestWithdrawalCard";
+import { ViewIcon } from "lucide-react";
+import ViewUpdates from "@/components/ViewUpdates";
+import CampaignDocumentViewer from "@/components/CampaignDocumentViewer";
 
 
 const ViewCampaign = () => {
@@ -21,8 +21,8 @@ const ViewCampaign = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [onFund, setOnFund] = useState(false);
-  const [load,setLoad]=useState(false)
-  const [imageUploaded, setImageUploaded] = useState(false); 
+  const [load, setLoad] = useState(false);
+  const [imageUploaded, setImageUploaded] = useState(false);
 
   const { contract } = useContract();
 
@@ -30,17 +30,17 @@ const ViewCampaign = () => {
     try {
       await contract.voteForCampaign(campaignId);
     } catch (error) {
-      console.error('Voting error:', error);
+      console.error("Voting error:", error);
     }
   };
 
   const handleDonate = async (amountInWei) => {
     try {
       await contract.donateToCampaign(id, { value: amountInWei });
-      alert('Thank you for your donation!');
+      alert("Thank you for your donation!");
     } catch (error) {
-      console.error('Donation failed:', error);
-      alert('Donation failed. Please try again.');
+      console.error("Donation failed:", error);
+      alert("Donation failed. Please try again.");
     }
   };
 
@@ -49,9 +49,14 @@ const ViewCampaign = () => {
       try {
         setIsLoading(true);
         const fetchedBasicDetails = await contract.getCampaignBasicDetails(id);
-        const fetchedFinancialDetails = await contract.getCampaignFinancialDetails(id);
-        const fetchedContributors = await contract.getContributorsForCampaign(id);
-        const fetchedOwnerDetails = await contract.getOwner(fetchedBasicDetails.owner);
+        const fetchedFinancialDetails =
+          await contract.getCampaignFinancialDetails(id);
+        const fetchedContributors = await contract.getContributorsForCampaign(
+          id
+        );
+        const fetchedOwnerDetails = await contract.getOwner(
+          fetchedBasicDetails.owner
+        );
 
         setBasicDetails({
           id: fetchedBasicDetails.id.toString(),
@@ -66,7 +71,6 @@ const ViewCampaign = () => {
           goal: parseFloat(fetchedFinancialDetails[0]),
           balance: parseFloat(fetchedFinancialDetails[1]),
           noOfContributors: parseFloat(fetchedFinancialDetails[2]),
-     
         });
 
         setContributors(fetchedContributors);
@@ -76,9 +80,8 @@ const ViewCampaign = () => {
           name: fetchedOwnerDetails[1],
           verified: fetchedOwnerDetails[2],
         });
-
       } catch (err) {
-        setError('Error fetching campaign details. Please try again later.');
+        setError("Error fetching campaign details. Please try again later.");
       } finally {
         setIsLoading(false);
       }
@@ -87,14 +90,16 @@ const ViewCampaign = () => {
     fetchCampaignDetails();
   }, [id, contract, onFund]);
 
-  if (isLoading) return <p className="text-center text-purple-700 mt-20">Loading...</p>;
+  if (isLoading)
+    return <p className="text-center text-purple-700 mt-20">Loading...</p>;
   if (error) return <p className="text-center text-red-600 mt-20">{error}</p>;
-
-  
 
   return (
     <div className="min-h-screen bg-white text-black">
-      <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-md flex items-center justify-between px-6 py-2" style={{ height: '50px' }}>
+      <div
+        className="fixed top-0 left-0 w-full z-50 bg-white shadow-md flex items-center justify-between px-6 py-2"
+        style={{ height: "50px" }}
+      >
         <h1 className="text-xl font-bold text-purple-600">Campaign Portal</h1>
         <button
           onClick={handleLogOut}
@@ -107,14 +112,13 @@ const ViewCampaign = () => {
         <div className="my-10 max-w-5xl mx-auto py-10 px-6">
           <div className="grid md:grid-cols-3 gap-8">
             <div className="md:col-span-2">
-                <Upload  campaignId={id} /> 
+              <Upload campaignId={id} />
               <TitleCard
                 basicDetails={basicDetails}
                 ownerDetails={ownerDetails}
                 contributors={contributors}
                 id={id}
               />
-              
             </div>
             <div>
               <FundCard
@@ -125,20 +129,19 @@ const ViewCampaign = () => {
                 refreshCampaign={() => {}}
                 setOnFund={setOnFund}
               />
-              <RequestWithdrawalCard campaignId={basicDetails?.id} onVote={handleVote} />
-              <Updates campaignId={id} setLoad={setLoad}/>
-              
-          
+              <RequestWithdrawalCard
+                campaignId={basicDetails?.id}
+                onVote={handleVote}
+              />
+              <Updates campaignId={id} setLoad={setLoad} />
+              <CampaignDocumentViewer campaignId={id} />
             </div>
-       
           </div>
-          
         </div>
-      
-        <ViewUpdates  campaignId={id} load={load}/>
+       
+        <ViewUpdates campaignId={id} load={load} />
        
       </div>
-
     </div>
   );
 };

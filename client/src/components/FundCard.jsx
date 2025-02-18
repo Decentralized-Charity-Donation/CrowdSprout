@@ -11,7 +11,7 @@ const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setO
   useEffect(() => {
     const fetchDeadlineStatus = async () => {
       try {
-        const deadlineStatus = await contract.isDeadlineReached(campaignId); 
+        const deadlineStatus = await contract.isDeadlineReached(campaignId,Math.floor(Date.now() / 1000)); 
         setIsDeadlineReached(deadlineStatus); 
       } catch (error) {
         console.error('Error checking deadline status:', error);
@@ -35,7 +35,7 @@ const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setO
     }
 
     try {
-      const deadlineStatus = await contract.isDeadlineReached(campaignId);
+      const deadlineStatus = await contract.isDeadlineReached(campaignId,Math.floor(Date.now() / 1000));
       if(deadlineStatus){
         alert("Campaign Ended")
         isDeadlineReached(true)
@@ -117,7 +117,7 @@ const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setO
   type="submit"
   className={`mt-4 w-full py-3 rounded-md text-white font-medium ${
     isDeadlineReached
-      ? 'bg-gray-400 cursor-not-allowed'
+      ? 'bg-purple-400 cursor-not-allowed'
       : 'bg-purple-700 hover:bg-purple-600'
   }`}
   disabled={isDeadlineReached} 

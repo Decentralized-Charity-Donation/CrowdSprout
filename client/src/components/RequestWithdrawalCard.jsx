@@ -4,26 +4,47 @@ import React, { useState, useEffect } from 'react';
 const RequestWithdrawalCard = ({ campaignId }) => {
   const { contract } = useContract(); 
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
-  const [didWithdraw, setDidWithdraw] = useState(false);
+  const [deadline,setDeadline]=useState(false)
+  const [votes,setVotes]=useState(false)
+  const [exist,setExist] = useState(true);
  
  
   const checkConditions = async () => {
+
     try {
-      const exists = await contract.exists(campaignId);
-      if (!exists) {
+      const exist=await contract.exists(campaignId)
+      const votesInFavour = await contract.isVotesInFavour(campaignId);
+      setVotes(votesInFavour)
+      if(!exist){
+        setExist(false)
+        setIsButtonEnabled(false)
+        return
+      }
+      const dead = await contract.isDeadlineReached(campaignId,Math.floor(Date.now() / 1000));
+      setDeadline(dead)
+      console.log(dead)
+      if (!dead) {
         setIsButtonEnabled(false); 
         return;
       }
-      const deadlineReached = true;
+     
 
-      if (deadlineReached) {
+      if (dead) {
         const votesInFavour = await contract.isVotesInFavour(campaignId);
-        console.log(votesInFavour ,deadlineReached)
-        setIsButtonEnabled(votesInFavour);
-        return;
+        setVotes(votesInFavour)
+        if(votesInFavour){
+          setIsButtonEnabled(true);
+          return
+        }
+        else{
+          await contract.isExists(false)
+          setIsButtonEnabled(false);
+          return
+        }
+        
       }
 
-      setIsButtonEnabled(false);
+     
     } catch (error) {
       console.error("Error checking conditions:", error);
       setIsButtonEnabled(false); 
@@ -32,39 +53,42 @@ const RequestWithdrawalCard = ({ campaignId }) => {
 
   useEffect(() => {
     checkConditions();
-  }, []);
+  }, [deadline]);
 
   const handleRequest = async () => {
     try {
-      const exists = await contract.exists(campaignId);
-      if (!exists) {
-        alert("Funds already withdrawn or campaign does not exist.");
-        setIsButtonEnabled(false); 
-        return;
-      }
+      // const exists = await contract.exists(campaignId);
+      // if (!exists) {
+      //   alert("Funds already withdrawn or campaign does not exist.");
+      //   setIsButtonEnabled(false); 
+      //   return;
+      // }
 
-      const deadline = await contract.isDeadlineReached(campaignId);
-      if (deadline) {
-        const votes = await contract.isVotesInFavour(campaignId);
-        if (votes) {
-          await contract.ownerWithdraw(campaignId);
-          setDidWithdraw(true);
-          setIsButtonEnabled(false); 
-        } else {
-          alert("50% of votes not reached :(");
-          return;
-        }
-      } else {
-        const votes = await contract.isVotesInFavour(campaignId);
-        if (votes) {
-          await contract.ownerWithdraw(campaignId);
-          setDidWithdraw(true);
-          setIsButtonEnabled(false); 
-        } else {
-          alert("50% of votes not reached :(");
-          return;
-        }
-      }
+      // const deadline = await contract.isDeadlineReached(campaignId,Math.floor(Date.now() / 1000));
+      // if (deadline) {
+      //   const votes = await contract.isVotesInFavour(campaignId);
+      //   if (votes) {
+      //     await contract.ownerWithdraw(campaignId);
+      //     setDidWithdraw(true);
+      //     setIsButtonEnabled(false); 
+      //   } else {
+      //     alert("50% of votes not reached :(");
+      //     return;
+      //   }
+      // } else {
+      //   const votes = await contract.isVotesInFavour(campaignId);
+      //   if (votes) {
+      //     await contract.ownerWithdraw(campaignId);
+      //     setDidWithdraw(true);
+      //     setIsButtonEnabled(false); 
+      //   } else {
+      //     alert("50% of votes not reached :(");
+      //     return;
+      //   }
+      // }
+      await contract.ownerWithdraw(campaignId)
+      setIsButtonEnabled(false);
+      
     } catch (error) {
       console.error("Request failed:", error);
       alert("Request failed. Please try again.");
@@ -80,7 +104,7 @@ const RequestWithdrawalCard = ({ campaignId }) => {
       </p>
 
      
-      {didWithdraw && (
+      {!exist && votes && (
         <div className="text-green-500 font-medium mb-4">
           Withdrawal successful!
         </div>
@@ -89,10 +113,22 @@ const RequestWithdrawalCard = ({ campaignId }) => {
       <button
         onClick={handleRequest}
         disabled={!isButtonEnabled} 
-        className={`mt-4 w-full py-3 rounded-md text-white font-medium ${isButtonEnabled ? "bg-purple-700 hover:bg-purple-600" : "bg-gray-400 cursor-not-allowed"}`}
+        className={`mt-4 w-full py-3 rounded-md text-white font-medium ${isButtonEnabled ? "bg-purple-700 hover:bg-purple-600" : "bg-purple-400 cursor-not-allowed"}`}
       >
-        Request
+        Withdraw
       </button>
+      
+      {!deadline  && <p className="text-sm text-purple-700 mt-2">Deadline not yet reached. Please try again later.</p>}
+    
+  
+
+
+{deadline && !votes && (
+  <p className="text-sm text-purple-700 mt-2">
+    Deadline reached but votes not more than 50%
+  </p>
+  
+)}
     </div>
   );
 };

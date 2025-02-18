@@ -426,9 +426,9 @@ function _removeContributor(uint campaignId, address contributor) internal {
 
 
 
-function isDeadlineReached(uint campaignId) public view returns (bool) {
+function isDeadlineReached(uint campaignId,uint dead) public view returns (bool) {
     Campaign storage campaign = campaigns[campaignId];
-    if (block.timestamp >= campaign.deadline) {
+    if (dead >= campaign.deadline) {
         return true;  
     } else {
         return false; 
@@ -449,6 +449,16 @@ function exists(uint campaignId) public view returns (bool){
   function isStoredTimeExpired(uint campaignId) public view returns (bool) {
         return campaigns[campaignId].deadline < block.timestamp;
     }
+
+    function isExists(uint campaignId)public {
+        campaigns[campaignId].exists=false;
+    }
+
+  function getCid(address ad) public view returns (string memory) {
+    return approvedOwners[ad];
+}
+
+
 
 }
 

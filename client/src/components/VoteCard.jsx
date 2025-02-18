@@ -12,7 +12,7 @@ const VoteCard = ({ campaignId, onVote }) => {
       try {
         const vote=await contract.getContributorsIfVoted(campaignId);
         setVoted(vote)
-        const isDeadline = await contract.isDeadlineReached(campaignId);
+        const isDeadline = await contract.isDeadlineReached(campaignId,Math.floor(Date.now() / 1000));
         console.log(isDeadline)
         setDeadlineReached(isDeadline); 
       } catch (error) {
@@ -25,7 +25,7 @@ const VoteCard = ({ campaignId, onVote }) => {
 
   const handleVote = async () => {
     try {
-      const isDeadline = await contract.isDeadlineReached(campaignId);
+      const isDeadline = await contract.isDeadlineReached(campaignId,Math.floor(Date.now() / 1000));
       const hasVoted = await contract.getContributorsIfVoted(campaignId);
       if(!isDeadline)
        {
@@ -96,7 +96,7 @@ const VoteCard = ({ campaignId, onVote }) => {
         onClick={voted || deadlineReached ? handleDisabledClick : handleVote} 
         className={`mt-4 w-full py-3 rounded-md font-medium ${
           voted || deadlineReached
-            ? 'bg-pink-200 cursor-not-allowed' 
+            ? 'bg-purple-400 cursor-not-allowed text-white' 
             : 'bg-purple-700 hover:bg-purple-600 text-white'
         }`}
         disabled={voted || deadlineReached}

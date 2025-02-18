@@ -3,8 +3,8 @@ import React from 'react'
 
 const Refund = ({  campaignId, isRefund, refreshDetails}) => { // Destructure campaignId correctly
   const { contract } = useContract();
-
-  // Declare the async function properly
+  
+  
   const getRefund = async () => {
     try {
       await contract.refundMyContribution(campaignId);
@@ -14,7 +14,7 @@ const Refund = ({  campaignId, isRefund, refreshDetails}) => { // Destructure ca
       return
     } catch (error) {
       console.error("Refund failed:", error);
-      alert("Successfull");
+      alert("No refund available");
     }
   }
 
@@ -22,7 +22,7 @@ const Refund = ({  campaignId, isRefund, refreshDetails}) => { // Destructure ca
     <div className="bg-purple-100 rounded-lg p-6 mt-6">
       <h2 className="text-lg font-semibold mb-4 text-purple-600">REFUND</h2>
       <p className="text-sm text-purple-600">
-        Get Your Money Back!
+        Get Your Money Back!Only if Not yet Voted!
       </p>
 
       <button

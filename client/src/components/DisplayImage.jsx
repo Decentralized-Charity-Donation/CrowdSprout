@@ -21,13 +21,13 @@ const DisplayImage = ({ campaignId }) => {
   }, [campaignId, contract]);
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-lg  p-6">
+    <div className="w-200 h-100 mx-auto  bg-white rounded-lg  p-2">
       {cid ? (
         <div className="text-center">
           <img
             src={`https://ipfs.io/ipfs/${cid}`}
             alt="Uploaded"
-             className="mx-auto rounded-lg shadow-lg r w-[600px] h-[300px]"
+             className="mx-auto rounded-lg shadow-lg w-[600px] h-[500px] object-cover"
           />
         </div>
       ) : (

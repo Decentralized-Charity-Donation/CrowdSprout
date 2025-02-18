@@ -9,6 +9,7 @@ import DisplayImage from '@/components/DisplayImage';
 import Refund from '@/components/Refund';
 import { ethers } from 'ethers';
 import ViewUpdates from '@/components/ViewUpdates';
+import CampaignDocumentViewer from '@/components/CampaignDocumentViewer';
 
 const FundCampaign = () => {
   const { id } = useParams();
@@ -59,7 +60,7 @@ const FundCampaign = () => {
     
         const hasVoted = await contract.getContributorsIfVoted(id);
       
-        const isDeadlineReached = await contract.isDeadlineReached(id);
+        const isDeadlineReached = await contract.isDeadlineReached(id,Math.floor(Date.now() / 1000));
 
         const VotesInFavour=await contract.isVotesInFavour(id);
 
@@ -139,7 +140,7 @@ const FundCampaign = () => {
       <div className="my-10 border-l-[50px] border-r-[50px] border-purple-200">
         <div className="my-10 max-w-5xl mx-auto py-10 px-6">
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 ">
               <DisplayImage campaignId={id}/>
               <TitleCard
                 basicDetails={basicDetails}
@@ -158,6 +159,7 @@ const FundCampaign = () => {
                 setOnFund={setOnFund}
                 deadline={basicDetails.daysLeft}
               />
+                <CampaignDocumentViewer campaignId={id} />
               <VoteCard campaignId={basicDetails?.id} onVote={handleVote} />
               {
                 show && <Refund campaignId={id} isRefund={isRefund}/>

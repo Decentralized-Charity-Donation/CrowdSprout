@@ -184,7 +184,7 @@ async function main() {
             src={`https://ipfs.io/ipfs/${cid}`}
 
             alt="Uploaded"
-            className="mx-auto rounded-lg shadow-lg r w-[600px] h-[300px]"
+            className="mx-auto rounded-lg shadow-lg w-[600px] h-[400px] object-cover"
           />
           
           <div className="mt-4 text-purple-600">

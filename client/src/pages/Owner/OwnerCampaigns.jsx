@@ -33,8 +33,8 @@ const OwnerCampaigns = () => {
       const campaigns = [];
       const campaignCount = await contract.getCampaignCount();
       for (let i = 0; i < campaignCount; i++) {
-        const isExpired = await contract.isDeadlineReached(i);
-        console.log("showExpired=",i," ",showExpired)
+        const isExpired = await contract.isDeadlineReached(i,Math.floor(Date.now() / 1000));
+       
         console.log("isExpired=",i," ",isExpired)
         if(showExpired){
              if(!isExpired){
@@ -47,6 +47,7 @@ const OwnerCampaigns = () => {
          }
         }
         const campaignDetails = await contract.getCampaignBasicDetails(i);
+        console.log(i,campaignDetails.deadline)
         const campaignImageCid = await contract.getCardImage(campaignDetails.id);
         const owner_address = campaignDetails.owner;
         const address = await signer.getAddress();
