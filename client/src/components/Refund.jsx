@@ -1,15 +1,14 @@
 import { useContract } from '@/ContractContext/ContractContext';
 import React from 'react'
 
-const Refund = ({  campaignId, isRefund, refreshDetails}) => { // Destructure campaignId correctly
+const Refund = ({  campaignId, setShow}) => { // Destructure campaignId correctly
   const { contract } = useContract();
   
   
   const getRefund = async () => {
     try {
       await contract.refundMyContribution(campaignId);
-      await isRefund()
-      await refreshDetails();
+      setShow(false)
       alert("Money Refunded");
       return
     } catch (error) {

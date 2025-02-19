@@ -387,11 +387,11 @@ function isContributor(uint campaignId) public view returns (bool){
 
 function refundMyContribution(uint campaignId) public {
     Campaign storage campaign = campaigns[campaignId];
-
-    
     uint contributedAmount = campaign.contributions[msg.sender];
     require(contributedAmount > 0, "You have not contributed to this campaign");
-    require(campaign.contributorsVoted[msg.sender] == false, "You have already voted, no refund");
+   // require(campaign.contributorsVoted[msg.sender] == false, "You have already voted, no refund");
+    //require(isDeadlineReached(campaignId,),"You have no reached deadline");
+    require(!isVotesInFavour(campaignId),"are are in favor no refund");
     //require(campaign.deadline<block.timestamp,"Deadline is reached");
     // Refund the contributor
     payable(msg.sender).transfer(contributedAmount);
@@ -421,7 +421,7 @@ function _removeContributor(uint campaignId, address contributor) internal {
     campaign.contributorList[index] = campaign.contributorList[lastIndex];
     campaign.contributorList.pop();
     campaign.contributions[contributor] = 0;
-    campaign.noOfContributors--;
+    //campaign.noOfContributors--;
 }
 
 
@@ -457,8 +457,6 @@ function exists(uint campaignId) public view returns (bool){
   function getCid(address ad) public view returns (string memory) {
     return approvedOwners[ad];
 }
-
-
 
 }
 

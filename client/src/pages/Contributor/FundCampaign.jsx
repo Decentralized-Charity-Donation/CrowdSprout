@@ -58,14 +58,14 @@ const FundCampaign = () => {
       
         const isContributor = await contract.isContributor(id);
     
-        const hasVoted = await contract.getContributorsIfVoted(id);
+        // const hasVoted = await contract.getContributorsIfVoted(id);
       
         const isDeadlineReached = await contract.isDeadlineReached(id,Math.floor(Date.now() / 1000));
-
+       
         const VotesInFavour=await contract.isVotesInFavour(id);
-
+        
      
-        if ((isContributor && !hasVoted && !isDeadlineReached) || (isContributor && isDeadlineReached && !VotesInFavour )) {
+        if (isContributor && !VotesInFavour && isDeadlineReached) {
           setShow(true);
         }
       } catch (error) {
@@ -162,7 +162,7 @@ const FundCampaign = () => {
                 <CampaignDocumentViewer campaignId={id} />
               <VoteCard campaignId={basicDetails?.id} onVote={handleVote} />
               {
-                show && <Refund campaignId={id} isRefund={isRefund}/>
+                show && <Refund campaignId={id} setShow={setShow}/>
               }
              
             </div>
