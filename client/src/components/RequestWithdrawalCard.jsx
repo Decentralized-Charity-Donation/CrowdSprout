@@ -7,7 +7,7 @@ const RequestWithdrawalCard = ({ campaignId }) => {
   const [deadline,setDeadline]=useState(false)
   const [votes,setVotes]=useState(false)
   const [exist,setExist] = useState(true);
- 
+  const [isGoalReached,setIsGoalReached]=useState(false)
  
   const checkConditions = async () => {
 
@@ -22,17 +22,17 @@ const RequestWithdrawalCard = ({ campaignId }) => {
       }
       const dead = await contract.isDeadlineReached(campaignId,Math.floor(Date.now() / 1000));
       setDeadline(dead)
-      console.log(dead)
       if (!dead) {
         setIsButtonEnabled(false); 
         return;
       }
      
-
       if (dead) {
         const votesInFavour = await contract.isVotesInFavour(campaignId);
+        const goal=await contract.isGoalReached(campaignId)
         setVotes(votesInFavour)
-        if(votesInFavour){
+        setIsGoalReached(goal)
+        if(votesInFavour && isGoalReached){
           setIsButtonEnabled(true);
           return
         }
@@ -57,35 +57,6 @@ const RequestWithdrawalCard = ({ campaignId }) => {
 
   const handleRequest = async () => {
     try {
-      // const exists = await contract.exists(campaignId);
-      // if (!exists) {
-      //   alert("Funds already withdrawn or campaign does not exist.");
-      //   setIsButtonEnabled(false); 
-      //   return;
-      // }
-
-      // const deadline = await contract.isDeadlineReached(campaignId,Math.floor(Date.now() / 1000));
-      // if (deadline) {
-      //   const votes = await contract.isVotesInFavour(campaignId);
-      //   if (votes) {
-      //     await contract.ownerWithdraw(campaignId);
-      //     setDidWithdraw(true);
-      //     setIsButtonEnabled(false); 
-      //   } else {
-      //     alert("50% of votes not reached :(");
-      //     return;
-      //   }
-      // } else {
-      //   const votes = await contract.isVotesInFavour(campaignId);
-      //   if (votes) {
-      //     await contract.ownerWithdraw(campaignId);
-      //     setDidWithdraw(true);
-      //     setIsButtonEnabled(false); 
-      //   } else {
-      //     alert("50% of votes not reached :(");
-      //     return;
-      //   }
-      // }
       await contract.ownerWithdraw(campaignId)
       setIsButtonEnabled(false);
       
@@ -99,8 +70,8 @@ const RequestWithdrawalCard = ({ campaignId }) => {
   return (
     <div className="bg-purple-100 rounded-lg p-6 mt-6">
       <h2 className="text-lg font-semibold mb-4 text-purple-600">WITHDRAW ETH</h2>
-      <p className="text-sm text-purple-600">
-        You can only withdraw the money if you have reached 80% of the goal and got more than 50% votes.
+      <p className="text-sm text-justify text-purple-600">
+      The withdrawal of ETH will only be permitted if the campaign has reached 80% or more of its funding goal, the deadline has passed, and at least 50% of the contributors have approved the withdrawal. Otherwise, the funds will be refunded to the contributors.
       </p>
 
      
@@ -121,11 +92,16 @@ const RequestWithdrawalCard = ({ campaignId }) => {
       {!deadline  && <p className="text-sm text-purple-700 mt-2">Deadline not yet reached. Please try again later.</p>}
     
   
-
+      {deadline && !isGoalReached && (
+  <p className="text-sm text-red-700 mt-2">
+    The deadline has passed, but the funding goal has not been met.
+  </p>
+  
+)}
 
 {deadline && !votes && (
-  <p className="text-sm text-purple-700 mt-2">
-    Deadline reached but votes not more than 50%
+  <p className="text-sm text-red-700 mt-2">
+    The deadline has passed, but the approval votes are less than 50%.
   </p>
   
 )}

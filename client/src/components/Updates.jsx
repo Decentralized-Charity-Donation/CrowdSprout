@@ -36,7 +36,7 @@ const Updates = ({ campaignId,setLoad}) => {
         }`}
         disabled={isDeadlineReached}
       >
-        Add Updates
+       Add Updates (Encourage Contributors to Vote)
       </button>
       
       {isModalOpen && (

@@ -7,7 +7,6 @@ import VoteCard from '@/components/VoteCard';
 import TitleCard from '@/components/TitleCard'; 
 import DisplayImage from '@/components/DisplayImage';
 import Refund from '@/components/Refund';
-import { ethers } from 'ethers';
 import ViewUpdates from '@/components/ViewUpdates';
 import CampaignDocumentViewer from '@/components/CampaignDocumentViewer';
 
@@ -23,6 +22,7 @@ const FundCampaign = () => {
   const { contract,signer } = useContract();
   const [show,setShow]=useState(false)
   const [refund,isRefunded]=useState(false)
+
 
   const isRefund=()=>{
   isRefunded(true)
@@ -58,16 +58,22 @@ const FundCampaign = () => {
       
         const isContributor = await contract.isContributor(id);
     
-        // const hasVoted = await contract.getContributorsIfVoted(id);
       
         const isDeadlineReached = await contract.isDeadlineReached(id,Math.floor(Date.now() / 1000));
        
         const VotesInFavour=await contract.isVotesInFavour(id);
         
-     
+        const goal=await contract.isGoalReached(id)
+       
         if (isContributor && !VotesInFavour && isDeadlineReached) {
           setShow(true);
+          
         }
+        else if (isContributor && !goal && isDeadlineReached) {
+          setShow(true);
+        
+        }
+     
       } catch (error) {
         console.error("Error checking conditions:", error);
       }

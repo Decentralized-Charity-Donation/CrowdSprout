@@ -45,7 +45,6 @@ async function main() {
       const fileBlob = new Blob([fileContent], { type: file.type }); 
       const file1 = new File([fileBlob], file.name, { type: file.type }); 
       const upload = await pinata.upload.file(file1);
-      console.log(upload.IpfsHash);
       return upload.IpfsHash;
     } catch (error) {
       console.log(error);

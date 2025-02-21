@@ -5,7 +5,7 @@ import ApprovedOwnersTable from './ApprovedOwnersTable';
 
 const AdminPage = () => {
   const [upload, setUpload] = useState(false);
-  console.log("ADMIN PAGE: ", upload);
+
 
   return (
     <div>

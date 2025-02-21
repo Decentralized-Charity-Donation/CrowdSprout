@@ -32,7 +32,7 @@ export const ContractProvider = ({ children }) => {
           setProvider(tempProvider);
           setSigner(tempSigner);
 
-          const tempContract = await new ethers.Contract(contractAddress, contractABI, tempSigner);
+          const tempContract = new ethers.Contract(contractAddress, contractABI, tempSigner);
           setContract(tempContract);
 
           const address = await tempSigner.getAddress();

@@ -4,7 +4,6 @@ import { Button } from "../../components/ui/button";
 
 const ApprovedOwnersTable = ({upload,setUpload}) => {
  
-  console.log("TABLE PAGE: ", upload);
   const { contract } = useContract();
   const [owners, setOwners] = useState([]);
   const [cids, setCids] = useState([]);

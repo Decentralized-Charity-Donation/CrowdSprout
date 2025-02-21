@@ -49,13 +49,14 @@ const FundCard = ({ campaign, minContribution, campaignId, refreshCampaign, setO
       setDonationAmount('');
       refreshCampaign();
     } catch (error) {
-      if (donationAmount > minContribution) {
+      if (donationAmount < minContribution) {
         console.log(donationAmount);
         console.log(minContribution);
         alert('Donation failed. The minimum amount payable is ', minContribution);
       } else {
         console.error('Donation failed:', error);
-        alert('Donation failed. Please try again.');
+        alert('Deadline reached.');
+        isDeadlineReached(true)
       }
     }
   };
